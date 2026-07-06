@@ -15,7 +15,7 @@ env/
 .vscode/
 .idea/
 
-# Secrets — KHÔNG BAO GIỜ commit file này lên GitHub
+# Secrets — NEVER commit this file to GitHub
 .env
 secrets.py
 

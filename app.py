@@ -1,16 +1,16 @@
 """
 app.py
 ======
-Web service nhận order từ Glide/n8n qua HTTP POST,
-rồi gọi bon_printer để in ra đúng trạm.
+Web service that receives orders from Glide/n8n over HTTP POST,
+then calls bon_printer to print to the correct station.
 
-Đây là "backend" của hệ thống — cầu nối giữa giao diện (Glide)
-và phần cứng (máy in nhiệt).
+This is the system's "backend" — the bridge between the UI (Glide)
+and the hardware (thermal printers).
 
-Chạy server:
+Run the server:
     uvicorn app:app --host 0.0.0.0 --port 8000 --reload
 
-Test nhanh bằng curl (xem README):
+Quick test with curl (see README):
     curl -X POST http://localhost:8000/order ...
 """
 
@@ -22,7 +22,7 @@ import logging
 from bon_printer import print_bon
 
 # ─── LOGGING ───────────────────────────────────────────────────────────────────
-# Ghi lại mọi request để debug khi có lỗi giờ cao điểm
+# Log every request so we can debug issues during rush hour
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)s  %(message)s",
@@ -34,64 +34,65 @@ log = logging.getLogger(__name__)
 # ─── APP ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="Restaurant Bon Printer",
-    description="Nhận order → tự chia trạm → in bon bếp/sushi/bar",
+    description="Receives orders → auto-splits by station → prints kitchen/sushi/bar tickets",
     version="1.0.0",
 )
 
 
 # ─── DATA MODELS (Pydantic) ────────────────────────────────────────────────────
-# Pydantic tự validate dữ liệu đầu vào. Nếu thiếu field hoặc sai kiểu,
-# FastAPI trả lỗi 422 với mô tả rõ ràng — không cần bạn viết if/else kiểm tra.
+# Pydantic validates incoming data automatically. If a field is missing or has
+# the wrong type, FastAPI returns a clear 422 error — no need to write your
+# own if/else checks.
 
 class OrderItem(BaseModel):
-    ten: str = Field(..., description="Tên món", example="Ramen bo")
-    so_luong: int = Field(1, ge=1, description="Số lượng, tối thiểu 1")
+    ten: str = Field(..., description="Item name", example="Ramen bo")
+    so_luong: int = Field(1, ge=1, description="Quantity, minimum 1")
     tram: str = Field(..., description="bep | sushi | bar")
 
 class Order(BaseModel):
-    ban: str = Field(..., description="Số bàn", example="5")
-    thoi_gian: str = Field(None, description="HH:MM, tự tạo nếu bỏ trống")
+    ban: str = Field(..., description="Table number", example="5")
+    thoi_gian: str = Field(None, description="HH:MM, auto-generated if left blank")
     items: List[OrderItem] = Field(..., min_items=1)
 
-    # Cho phép dry_run=true khi test mà không cần máy in thật
-    dry_run: bool = Field(False, description="True = in ra terminal, không gửi máy in")
+    # Allows dry_run=true for testing without a real printer
+    dry_run: bool = Field(False, description="True = print to terminal, don't send to printer")
 
 
 # ─── ENDPOINTS ─────────────────────────────────────────────────────────────────
 
 @app.get("/health")
 def health_check():
-    """Kiểm tra service đang chạy. n8n hoặc monitoring có thể ping endpoint này."""
+    """Check that the service is running. n8n or monitoring can ping this endpoint."""
     return {"status": "ok", "service": "bon-printer"}
 
 
 @app.post("/order")
 def receive_order(order: Order):
     """
-    Nhận một order, tự phân loại theo trạm, in bon tới từng trạm.
+    Receive an order, group it by station, print a ticket to each station.
 
     Flow:
-        1. Nhóm items theo trạm
-        2. Với mỗi trạm có món → gọi print_bon()
-        3. Trả về kết quả tổng hợp
+        1. Group items by station
+        2. For each station with items → call print_bon()
+        3. Return the aggregated result
 
-    Nếu MỌI trạm đều in thất bại → trả 503 để n8n có thể retry.
-    Nếu CHỈ MỘT SỐ trạm thất bại → trả 207 (partial success).
+    If EVERY station fails to print → return 503 so n8n can retry.
+    If ONLY SOME stations fail → return 207 (partial success).
     """
     order_dict = order.dict()
-    log.info(f"Order nhận được — Bàn {order.ban} — {len(order.items)} món")
+    log.info(f"Order received — Table {order.ban} — {len(order.items)} items")
 
-    # Xác định các trạm cần in
+    # Determine which stations need to print
     tram_can_in = set(item.tram for item in order.items)
     valid_trams = {"bep", "sushi", "bar"}
     invalid = tram_can_in - valid_trams
     if invalid:
         raise HTTPException(
             status_code=400,
-            detail=f"Trạm không hợp lệ: {invalid}. Chỉ chấp nhận: {valid_trams}"
+            detail=f"Invalid station(s): {invalid}. Only accepted: {valid_trams}"
         )
 
-    # In tới từng trạm
+    # Print to each station
     results = {}
     for tram in tram_can_in:
         result = print_bon(order_dict, tram, dry_run=order.dry_run)
@@ -101,13 +102,13 @@ def receive_order(order: Order):
         else:
             log.error(f"  [{tram}] ✗ {result['message']}")
 
-    # Tổng hợp kết quả
+    # Aggregate results
     all_ok     = all(r["ok"] for r in results.values())
     any_ok     = any(r["ok"] for r in results.values())
     failed     = [t for t, r in results.items() if not r["ok"]]
 
     if not any_ok:
-        # Tất cả thất bại — n8n nên retry
+        # Everything failed — n8n should retry
         raise HTTPException(status_code=503, detail={"results": results})
 
     status_code = 200 if all_ok else 207  # 207 = Multi-Status (partial success)
@@ -123,6 +124,6 @@ def receive_order(order: Order):
 def root():
     return {
         "message": "Restaurant Bon Printer v1.0",
-        "docs": "/docs",      # FastAPI tự tạo trang docs tại đây
+        "docs": "/docs",      # FastAPI auto-generates the docs page here
         "health": "/health",
     }

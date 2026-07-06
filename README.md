@@ -1,92 +1,92 @@
 # Restaurant Bon Printer
 
-Tự động in bon bếp / sushi / bar khi nhận order từ Glide hoặc n8n.
+Automatically prints kitchen/sushi/bar tickets when an order comes in from Glide or n8n.
 
 ---
 
-## Cấu trúc project
+## Project structure
 
 ```
 restaurant-bon-printer/
-├── bon_printer.py   # Logic dựng + gửi bon ESC/POS
+├── bon_printer.py   # Logic to build + send ESC/POS tickets
 ├── app.py           # FastAPI web service (backend)
-├── requirements.txt # Dependencies Python
-├── .gitignore       # File nào không commit lên GitHub
-└── README.md        # File này
+├── requirements.txt # Python dependencies
+├── .gitignore       # Files not to commit to GitHub
+└── README.md        # This file
 ```
 
 ---
 
-## BƯỚC 0 — Git setup (bài tập hiện tại của bạn)
+## STEP 0 — Git setup (your current exercise)
 
-Đây là các lệnh Git đầu tiên bạn chạy trên một project thật.
-Chạy lần lượt trong terminal (WSL hoặc Linux):
+These are the first Git commands you'll run on a real project.
+Run them one by one in a terminal (WSL or Linux):
 
 ```bash
-# 1. Tạo thư mục project và vào trong
+# 1. Create the project folder and cd into it
 mkdir restaurant-bon-printer
 cd restaurant-bon-printer
 
-# 2. Copy 4 file vào thư mục này (bon_printer.py, app.py, requirements.txt, .gitignore)
+# 2. Copy the 4 files into this folder (bon_printer.py, app.py, requirements.txt, .gitignore)
 
-# 3. Khởi tạo Git repo
+# 3. Initialize a Git repo
 git init
 
-# 4. Kiểm tra trạng thái — sẽ thấy 4 file "untracked"
+# 4. Check status — you should see 4 "untracked" files
 git status
 
-# 5. Stage tất cả file (thêm vào "vùng chuẩn bị commit")
+# 5. Stage all files (add them to the "commit staging area")
 git add .
 
-# 6. Xem lại lần nữa — giờ file sẽ màu xanh (staged)
+# 6. Check again — files should now be green (staged)
 git status
 
-# 7. Commit đầu tiên — message rõ ràng, viết ở thì hiện tại
+# 7. First commit — clear message, written in present tense
 git commit -m "feat: add bon printer service with FastAPI endpoint"
 
-# 8. Xem lịch sử commit
+# 8. View commit history
 git log --oneline
 ```
 
-Tiếp theo, push lên GitHub:
+Next, push to GitHub:
 
 ```bash
-# Tạo repo mới trên github.com (đặt tên: restaurant-bon-printer, để Private)
-# Sau đó chạy lệnh GitHub gợi ý, dạng:
+# Create a new repo on github.com (name it: restaurant-bon-printer, keep it Private)
+# Then run the commands GitHub suggests, something like:
 
 git remote add origin https://github.com/YOUR_USERNAME/restaurant-bon-printer.git
 git branch -M main
 git push -u origin main
 ```
 
-**Checkpoint:** Vào github.com, vào repo của bạn, thấy 4 file ở đó = bạn đã hoàn thành bước này.
+**Checkpoint:** Go to github.com, open your repo, and see the 4 files there = you've completed this step.
 
 ---
 
-## BƯỚC 1 — Test offline (không cần máy in)
+## STEP 1 — Test offline (no printer needed)
 
 ```bash
-# Cài dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# Chạy test dry_run — in mô phỏng ra terminal
+# Run the dry_run test — simulated printing to the terminal
 python bon_printer.py
 ```
 
-Bạn sẽ thấy 3 bon hiện ra trên màn hình cho bàn 5.
+You should see 3 tickets printed to the screen for table 5.
 
 ---
 
-## BƯỚC 2 — Chạy web service
+## STEP 2 — Run the web service
 
 ```bash
 uvicorn app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Mở trình duyệt: http://localhost:8000/docs
-→ FastAPI tự tạo trang test API tại đây (Swagger UI).
+Open your browser: http://localhost:8000/docs
+→ FastAPI auto-generates a test API page here (Swagger UI).
 
-Test bằng curl:
+Test with curl:
 
 ```bash
 curl -X POST http://localhost:8000/order \
@@ -105,34 +105,34 @@ curl -X POST http://localhost:8000/order \
 
 ---
 
-## BƯỚC 3 — Cắm máy in thật
+## STEP 3 — Plug in a real printer
 
-1. Mua máy in nhiệt có cổng LAN (khuyên dùng Xprinter XP-C300H ~2.2 triệu)
-2. Cắm vào router, vào trang admin router đặt IP tĩnh cho máy in
-3. Sửa `PRINTER_CONFIG` trong `bon_printer.py`:
+1. Buy a thermal printer with a LAN port (recommended: Xprinter XP-C300H, ~2.2 million VND)
+2. Plug it into the router, go to the router's admin page and assign a static IP to the printer
+3. Edit `PRINTER_CONFIG` in `bon_printer.py`:
    ```python
    PRINTER_CONFIG = {
        "bep":   {"ip": "192.168.1.101", "port": 9100},
        "sushi": {"ip": "192.168.1.102", "port": 9100},
    }
    ```
-4. Test kết nối:
+4. Test the connection:
    ```bash
-   # Nếu có phản hồi = máy in đang online
+   # If you get a response = the printer is online
    nc -zv 192.168.1.101 9100
    ```
-5. Chạy lại curl trên với `"dry_run": false`
+5. Re-run the curl command above with `"dry_run": false`
 
 ---
 
-## Lộ trình học qua project này
+## Learning roadmap through this project
 
-| Giai đoạn   | Bạn học gì         | Áp dụng vào project                          |
-|-------------|---------------------|----------------------------------------------|
-| **Hiện tại**| Git & GitHub        | Init repo, commit, push lên GitHub           |
-| Giai đoạn 3 | Python + SQL        | Thêm database lưu order theo bàn, tính bill  |
-| Giai đoạn 4 | Backend + REST API  | Thêm auth, menu CRUD endpoint, kết nối Glide |
-| Giai đoạn 5 | Claude Code         | Dùng AI để viết test, refactor, debug        |
-| Giai đoạn 6 | AI Agents           | Agent tự suggest upsell, detect thất thoát   |
+| Stage        | What you learn       | Applied to the project                        |
+|--------------|-----------------------|------------------------------------------------|
+| **Current**  | Git & GitHub          | Init repo, commit, push to GitHub               |
+| Stage 3      | Python + SQL          | Add a database to store orders per table, compute bills |
+| Stage 4      | Backend + REST API    | Add auth, menu CRUD endpoints, connect to Glide |
+| Stage 5      | Claude Code           | Use AI to write tests, refactor, debug          |
+| Stage 6      | AI Agents             | Agent auto-suggests upsells, detects losses     |
 
-Mỗi giai đoạn bạn sẽ mở branch mới, làm xong merge vào main — đúng workflow Git thật.
+Each stage, you'll open a new branch, finish the work, and merge into main — following a real Git workflow.
