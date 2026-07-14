@@ -1,129 +1,95 @@
-"""
-app.py
-======
-Web service that receives orders from Glide/n8n over HTTP POST,
-then calls bon_printer to print to the correct station.
-
-This is the system's "backend" — the bridge between the UI (Glide)
-and the hardware (thermal printers).
-
-Run the server:
-    uvicorn app:app --host 0.0.0.0 --port 8000 --reload
-
-Quick test with curl (see README):
-    curl -X POST http://localhost:8000/order ...
-"""
-
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from typing import List
+from supabase import create_client
+from dotenv import load_dotenv
+import os
 import logging
 
 from bon_printer import print_bon
 
-# ─── LOGGING ───────────────────────────────────────────────────────────────────
-# Log every request so we can debug issues during rush hour
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s  %(levelname)s  %(message)s",
-    datefmt="%H:%M:%S",
-)
+
+load_dotenv()
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
+app = FastAPI()
 
-# ─── APP ───────────────────────────────────────────────────────────────────────
-app = FastAPI(
-    title="Restaurant Bon Printer",
-    description="Receives orders → auto-splits by station → prints kitchen/sushi/bar tickets",
-    version="1.0.0",
-)
+supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 
-
-# ─── DATA MODELS (Pydantic) ────────────────────────────────────────────────────
-# Pydantic validates incoming data automatically. If a field is missing or has
-# the wrong type, FastAPI returns a clear 422 error — no need to write your
-# own if/else checks.
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 class OrderItem(BaseModel):
-    ten: str = Field(..., description="Item name", example="Ramen bo")
-    so_luong: int = Field(1, ge=1, description="Quantity, minimum 1")
-    tram: str = Field(..., description="bep | sushi | bar")
+    mon_id: int
+    so_luong: int = Field(1, ge=1)
 
 class Order(BaseModel):
-    ban: str = Field(..., description="Table number", example="5")
-    thoi_gian: str = Field(None, description="HH:MM, auto-generated if left blank")
-    items: List[OrderItem] = Field(..., min_items=1)
-
-    # Allows dry_run=true for testing without a real printer
-    dry_run: bool = Field(False, description="True = print to terminal, don't send to printer")
-
-
-# ─── ENDPOINTS ─────────────────────────────────────────────────────────────────
-
-@app.get("/health")
-def health_check():
-    """Check that the service is running. n8n or monitoring can ping this endpoint."""
-    return {"status": "ok", "service": "bon-printer"}
-
-
-@app.post("/order")
-def receive_order(order: Order):
-    """
-    Receive an order, group it by station, print a ticket to each station.
-
-    Flow:
-        1. Group items by station
-        2. For each station with items → call print_bon()
-        3. Return the aggregated result
-
-    If EVERY station fails to print → return 503 so n8n can retry.
-    If ONLY SOME stations fail → return 207 (partial success).
-    """
-    order_dict = order.dict()
-    log.info(f"Order received — Table {order.ban} — {len(order.items)} items")
-
-    # Determine which stations need to print
-    tram_can_in = set(item.tram for item in order.items)
-    valid_trams = {"bep", "sushi", "bar"}
-    invalid = tram_can_in - valid_trams
-    if invalid:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Invalid station(s): {invalid}. Only accepted: {valid_trams}"
-        )
-
-    # Print to each station
-    results = {}
-    for tram in tram_can_in:
-        result = print_bon(order_dict, tram, dry_run=order.dry_run)
-        results[tram] = result
-        if result["ok"]:
-            log.info(f"  [{tram}] ✓ {result['message']}")
-        else:
-            log.error(f"  [{tram}] ✗ {result['message']}")
-
-    # Aggregate results
-    all_ok     = all(r["ok"] for r in results.values())
-    any_ok     = any(r["ok"] for r in results.values())
-    failed     = [t for t, r in results.items() if not r["ok"]]
-
-    if not any_ok:
-        # Everything failed — n8n should retry
-        raise HTTPException(status_code=503, detail={"results": results})
-
-    status_code = 200 if all_ok else 207  # 207 = Multi-Status (partial success)
-    return {
-        "ban": order.ban,
-        "status": "ok" if all_ok else "partial",
-        "failed_trams": failed,
-        "results": results,
-    }
-
+    ban: int
+    items: List[OrderItem]
+    dry_run: bool = False
 
 @app.get("/")
 def root():
+    return FileResponse("static/index.html")
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+@app.get("/menu")
+def get_menu():
+    data = supabase.table("menu").select("*").execute()
+    return data.data
+
+@app.post("/order")
+def receive_order(order: Order):
+    # Tra Supabase để lấy tên món và trạm
+    order_items = []
+    for item in order.items:
+        result = supabase.table("menu").select("*").eq("id", item.mon_id).execute()
+        if not result.data:
+            raise HTTPException(status_code=404, detail=f"Không tìm thấy món id {item.mon_id}")
+        menu_item = result.data[0]
+        order_items.append({
+            "ten": menu_item["ten"],
+            "so_luong": item.so_luong,
+            "tram": menu_item["tram"]
+        })
+        supabase.table("orders").insert({
+            "ban": order.ban,
+            "ten": menu_item["ten"],
+            "so_luong": item.so_luong,
+            "tram": menu_item["tram"]
+        }).execute()
+
+    order_dict = {"ban": str(order.ban), "items": order_items}
+    tram_can_in = set(i["tram"] for i in order_items)
+
+    results = {}
+    for tram in tram_can_in:
+        results[tram] = print_bon(order_dict, tram, dry_run=order.dry_run)
+
+    all_ok = all(r["ok"] for r in results.values())
+    any_ok = any(r["ok"] for r in results.values())
+
+    if not any_ok:
+        raise HTTPException(status_code=503, detail=results)
+
     return {
-        "message": "Restaurant Bon Printer v1.0",
-        "docs": "/docs",      # FastAPI auto-generates the docs page here
-        "health": "/health",
+        "ban": order.ban,
+        "status": "ok" if all_ok else "partial",
+        "results": results
     }
+
+@app.get("/orders")
+def get_orders():
+    data = supabase.table("orders").select("*").order("thoi_gian", desc=False).execute()
+    return data.data
+
+@app.patch("/orders/{order_id}/done")
+def mark_done(order_id: int):
+    supabase.table("orders").update({"trang_thai": "xong"}).eq("id", order_id).execute()
+    return {"status": "ok"}

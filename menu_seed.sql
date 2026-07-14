@@ -1,5 +1,5 @@
 -- ============================================================
--- BƯỚC 1: Tạo bảng (chạy trong Supabase SQL Editor)
+-- Step 1: Create Table (Supabase SQL Editor)
 -- ============================================================
 CREATE TABLE menu (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -11,7 +11,7 @@ CREATE TABLE menu (
 );
 
 -- ============================================================
--- BƯỚC 2: Insert toàn bộ menu
+-- Step 2: Insert menu
 -- ============================================================
 
 -- STARTERS (tram: bep)
