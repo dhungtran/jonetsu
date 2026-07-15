@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #f8f7fc; color: #1e1b4b; padding: 16px; }
+    header {
+      text-align: center; font-size: 20px; font-weight: bold; padding: 14px;
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      color: white; border-radius: 12px; margin-bottom: 16px;
+    }
+    #tables { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .card {
+      background: white; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(168,85,247,0.1); border: 1px solid #e9d5ff;
+    }
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 16px; cursor: pointer; user-select: none;
+    }
+    .card-header:hover { background: #faf8ff; }
+    .ban-num { font-size: 20px; font-weight: bold; color: #7c3aed; }
+    .ban-time { font-size: 11px; color: #a855f7; display: block; margin-top: 2px; }
+    .dots { display: flex; gap: 5px; align-items: center; }
+    .dot { font-size: 12px; padding: 3px 8px; border-radius: 10px; }
+    .dot.pending { background: #fff7ed; color: #c2410c; }
+    .dot.done    { background: #f0fdf4; color: #16a34a; }
+    .chevron { color: #a855f7; font-size: 11px; margin-left: 6px; transition: transform 0.2s; }
+    .card.open .chevron { transform: rotate(180deg); }
+    .card-body { display: none; padding: 0 16px 16px; border-top: 1px solid #f5f0ff; }
+    .card.open .card-body { display: block; }
+    .station { margin-top: 12px; }
+    .station-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+    }
+    .station-label { font-size: 13px; font-weight: 600; }
+    .all-btn {
+      font-size: 11px; padding: 3px 10px; border: 1px solid #7c3aed;
+      background: #f5f0ff; color: #7c3aed; border-radius: 12px; cursor: pointer;
+    }
+    .all-btn:hover { background: #7c3aed; color: white; }
+    .done-label { font-size: 11px; color: #16a34a; }
+    .order-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 8px; border-radius: 8px; margin-bottom: 4px;
+      background: #f9f7fe; cursor: pointer;
+    }
+    .order-row:hover { background: #f0ebff; }
+    .order-row.done { background: #f0fdf4; }
+    .order-row input[type=checkbox] { accent-color: #7c3aed; width: 16px; height: 16px; flex-shrink: 0; }
+    .row-name { flex: 1; font-size: 13px; }
+    .order-row.done .row-name { text-decoration: line-through; color: #aaa; }
+    .divider { border: none; border-top: 1px dashed #e9d5ff; margin: 10px 0; }
+    .pay-btn {
+      width: 100%; margin-top: 12px; padding: 11px; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer; color: white;
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+    }
+    .pay-options { display: flex; gap: 8px; margin-top: 12px; }
+    .pay-opt {
+      flex: 1; padding: 11px; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer; color: white;
+    }
+    .pay-opt.card { background: #7c3aed; }
+    .pay-opt.cash { background: #ec4899; }
+    .cancel-btn {
+      width: 100%; margin-top: 6px; padding: 7px; background: none;
+      border: 1px solid #e9d5ff; border-radius: 8px;
+      color: #a855f7; font-size: 12px; cursor: pointer;
+    }
+    #empty { text-align: center; color: #c4b5fd; margin-top: 60px; font-size: 15px; display: none; }
+  </style>
+</head>
+<body>
+<header>🍽️ Trạng thái bàn</header>
+<div id="tables"></div>
+<div id="empty">Không có bàn nào đang hoạt động</div>
+<script>
+  const STATIONS = [
+    { key: 'bar',   label: '🍹 Nước'  },
+    { key: 'sushi', label: '🍱 Sushi' },
+    { key: 'bep',   label: '🍳 Bếp'   },
+  ];
+
+  const openBans = new Set();
+
+  async function load() {
+    const orders = await fetch('/tables').then(r => r.json());
+    const grouped = {};
+    orders.forEach(o => {
+      if (!grouped[o.ban]) grouped[o.ban] = { items: [], first_time: o.thoi_gian };
+      grouped[o.ban].items.push(o);
+    });
+
+    const div = document.getElementById('tables');
+    div.innerHTML = '';
+    const bans = Object.keys(grouped).sort((a, b) => +a - +b);
+    document.getElementById('empty').style.display = bans.length ? 'none' : 'block';
+
+    bans.forEach(ban => {
+      const { items, first_time } = grouped[ban];
+      const time = new Date(first_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      const isOpen = openBans.has(String(ban));
+
+      // Dots cho collapsed view
+      const dotsHtml = STATIONS.map(({ key, label }) => {
+        const st = items.filter(o => o.tram === key);
+        if (!st.length) return '';
+        const pending = st.some(o => o.trang_thai === 'cho');
+        return `<span class="dot ${pending ? 'pending' : 'done'}">${label.split(' ')[0]} ${pending ? '⏳' : '✓'}</span>`;
+      }).join('');
+
+      // Chi tiết từng trạm
+      let sectionsHtml = '';
+      STATIONS.forEach(({ key, label }) => {
+        const st = items.filter(o => o.tram === key);
+        if (!st.length) return;
+        const pendingIds = st.filter(o => o.trang_thai === 'cho').map(o => o.id);
+        const allDone = pendingIds.length === 0;
+
+        sectionsHtml += `
+          <div class="station">
+            <div class="station-header">
+              <span class="station-label">${label}</span>
+              ${allDone
+                ? '<span class="done-label">✓ Xong hết</span>'
+                : `<button class="all-btn" onclick="markAll([${pendingIds}])">✓ Tất cả xong</button>`}
+            </div>
+            ${st.map(o => `
+              <div class="order-row ${o.trang_thai === 'xong' ? 'done' : ''}" onclick="toggle(${o.id},'${o.trang_thai}')">
+                <input type="checkbox" ${o.trang_thai === 'xong' ? 'checked' : ''} onclick="event.stopPropagation();toggle(${o.id},'${o.trang_thai}')">
+                <span class="row-name">x${o.so_luong} ${o.ten}</span>
+              </div>`).join('')}
+          </div>
+          <hr class="divider">`;
+      });
+
+      div.innerHTML += `
+        <div class="card ${isOpen ? 'open' : ''}" id="card-${ban}">
+          <div class="card-header" onclick="toggleCard('${ban}')">
+            <div>
+              <span class="ban-num">Bàn ${ban}</span>
+              <span class="ban-time">Từ ${time}</span>
+            </div>
+            <div style="display:flex;align-items:center;">
+              <div class="dots">${dotsHtml}</div>
+              <span class="chevron">▼</span>
+            </div>
+          </div>
+          <div class="card-body">
+            ${sectionsHtml}
+            <div id="pay-${ban}">
+              <button class="pay-btn" onclick="showPayOptions('${ban}')">💳 Thanh toán</button>
+            </div>
+          </div>
+        </div>`;
+    });
+  }
+
+  function toggleCard(ban) {
+    const s = String(ban);
+    openBans.has(s) ? openBans.delete(s) : openBans.add(s);
+    document.getElementById('card-' + ban).classList.toggle('open', openBans.has(s));
+  }
+
+  function showPayOptions(ban) {
+    document.getElementById('pay-' + ban).innerHTML = `
+      <div class="pay-options">
+        <button class="pay-opt card" onclick="pay(${ban})">💳 Card</button>
+        <button class="pay-opt cash" onclick="pay(${ban})">💵 Cash</button>
+      </div>
+      <button class="cancel-btn" onclick="cancelPay('${ban}')">Huỷ</button>`;
+  }
+
+  function cancelPay(ban) {
+    document.getElementById('pay-' + ban).innerHTML =
+      `<button class="pay-btn" onclick="showPayOptions('${ban}')">💳 Thanh toán</button>`;
+  }
+
+  async function toggle(id, status) {
+    const url = status === 'cho' ? '/orders/' + id + '/done' : '/orders/' + id + '/undo';
+    await fetch(url, { method: 'PATCH' });
+    load();
+  }
+
+  async function markAll(ids) {
+    await Promise.all(ids.map(id => fetch('/orders/' + id + '/done', { method: 'PATCH' })));
+    load();
+  }
+
+  async function pay(ban) {
+    await fetch('/tables/' + ban + '/paid', { method: 'PATCH' });
+    openBans.delete(String(ban));
+    load();
+  }
+
+  load();
+  setInterval(load, 8000);
+</script>
+</body>
+</html>

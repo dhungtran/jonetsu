@@ -198,8 +198,21 @@
 
     #send-btn:disabled { background: #f3e8ff; color: #c4b5fd; }
 
-    #bar-section { padding: 0 16px 12px; }
+    #bar-section { padding: 0 16px 200px; }
     #bar-section h3 { font-size: 13px; color: #a855f7; margin-bottom: 8px; }
+
+    #bar-summary { margin-bottom: 10px; }
+
+    .bar-summary-badge {
+      display: inline-block;
+      background: #f5f0ff;
+      border: 1px solid #d8b4fe;
+      border-radius: 20px;
+      padding: 4px 12px;
+      margin: 0 6px 6px 0;
+      font-size: 12px;
+      color: #7c3aed;
+    }
 
     .bar-item {
       background: white;
@@ -207,20 +220,20 @@
       border-radius: 8px;
       padding: 10px 12px;
       margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       box-shadow: 0 1px 4px rgba(236,72,153,0.08);
     }
 
-    .bar-item span { font-size: 13px; color: #1e1b4b; }
+    .bar-ban { font-size: 13px; font-weight: 600; color: #1e1b4b; margin-bottom: 4px; }
+    .bar-line { font-size: 13px; color: #1e1b4b; padding: 2px 0; }
 
     .bar-done-btn {
+      margin-top: 8px;
+      width: 100%;
       background: #f0fdf4;
       color: #16a34a;
       border: none;
       border-radius: 6px;
-      padding: 5px 10px;
+      padding: 6px 10px;
       font-size: 12px;
       cursor: pointer;
     }
@@ -234,6 +247,13 @@
     <label>Bàn</label>
     <input type="number" id="table-num" min="1" placeholder="1">
   </div>
+  <a href="/static/dashboard.html" style="
+    background: rgba(124,58,237,0.15); color: #7c3aed;
+    border: 1.5px solid #7c3aed; border-radius: 20px;
+    padding: 5px 12px; font-size: 13px; font-weight: 600;
+    text-decoration: none; white-space: nowrap;">
+    Dashboard
+  </a>
 </header>
 
 <div id="ghi-chu-wrap">
@@ -249,6 +269,7 @@
 
 <div id="bar-section">
   <h3>Bar — Đang chờ</h3>
+  <div id="bar-summary"></div>
   <div id="bar-orders"></div>
 </div>
 
@@ -382,24 +403,49 @@
     }
   };
 
+  function renderBarSummary(pending) {
+    const totals = {};
+    pending.forEach(o => {
+      if (!totals[o.ten]) totals[o.ten] = 0;
+      totals[o.ten] += o.so_luong;
+    });
+    const div = document.getElementById('bar-summary');
+    const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+    div.innerHTML = sorted.map(([ten, qty]) => `
+      <span class="bar-summary-badge">${ten} <strong style="color:#ec4899">x${qty}</strong></span>`).join('');
+  }
+
   async function loadBarOrders() {
     const res = await fetch('/orders?tram=bar');
     const orders = await res.json();
-    const div = document.getElementById('bar-orders');
     const pending = orders.filter(o => o.trang_thai === 'cho');
+
+    renderBarSummary(pending);
+
+    const div = document.getElementById('bar-orders');
     if (pending.length === 0) {
       div.innerHTML = '<p style="color:#c4b5fd; font-size:13px">Không có order nào</p>';
       return;
     }
-    div.innerHTML = pending.map(o => `
+
+    const grouped = {};
+    pending.forEach(o => {
+      const key = o.order_id || o.id;
+      if (!grouped[key]) grouped[key] = { ban: o.ban, items: [], ids: [] };
+      grouped[key].items.push(`x${o.so_luong} ${o.ten}`);
+      grouped[key].ids.push(o.id);
+    });
+
+    div.innerHTML = Object.values(grouped).map(group => `
       <div class="bar-item">
-        <span>Bàn ${o.ban} — x${o.so_luong} ${o.ten}</span>
-        <button class="bar-done-btn" onclick="barDone(${o.id})">Xong</button>
+        <div class="bar-ban">Bàn ${group.ban}</div>
+        ${group.items.map(i => `<div class="bar-line">${i}</div>`).join('')}
+        <button class="bar-done-btn" onclick="barDone(${JSON.stringify(group.ids)})">Xong</button>
       </div>`).join('');
   }
 
-  async function barDone(id) {
-    await fetch('/orders/' + id + '/done', { method: 'PATCH' });
+  async function barDone(ids) {
+    await Promise.all(ids.map(id => fetch('/orders/' + id + '/done', { method: 'PATCH' })));
     loadBarOrders();
   }
 

@@ -61,13 +61,16 @@ def receive_order(order: Order):
             "so_luong": item.so_luong,
             "tram": menu_item["tram"]
         })
+       
         supabase.table("orders").insert({
             "ban": order.ban,
             "ten": menu_item["ten"],
             "so_luong": item.so_luong,
-            "tram": menu_item["tram"], 
+            "tram": menu_item["tram"],
             "order_id": order_id,
-            "ghi_chu": order.ghi_chu
+            "ghi_chu": order.ghi_chu,
+            "category": menu_item["category"], 
+            "gia": menu_item["category"],
         }).execute()
 
     order_dict = {"ban": str(order.ban), "items": order_items}
@@ -109,3 +112,17 @@ def toggle_available(item_id: int):
     supabase.table("menu").update({"available": new_status}).eq("id", item_id).execute()
     return {"available": new_status}
 
+@app.get("/tables")
+def get_tables():
+    data = supabase.table("orders").select("*").neq("trang_thai", "paid").order("thoi_gian", desc=False).execute()
+    return data.data
+
+@app.patch("/tables/{ban}/paid")
+def mark_table_paid(ban: int):
+    supabase.table("orders").update({"trang_thai": "paid"}).eq("ban", ban).neq("trang_thai", "paid").execute()
+    return {"status": "ok"}
+
+@app.patch("/orders/{order_id}/undo")
+def mark_undo(order_id: int):
+    supabase.table("orders").update({"trang_thai": "cho"}).eq("id", order_id).execute()
+    return {"status": "ok"}

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && source venv/bin/activate && python -c 'import ast; ast.parse\\(open\\(\\\\\"app.py\\\\\"\\).read\\(\\)\\)' && echo APP_PY_OK\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && source venv/bin/activate && python -m py_compile app.py bon_printer.py && echo COMPILE_OK\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && source venv/bin/activate && timeout 6 uvicorn app:app --host 0.0.0.0 --port 8000 2>&1 | head -n 40\")",
+      "PowerShell(wsl -e bash -lc \"ss -ltnp 2>/dev/null | grep 8000; echo ---; ps aux | grep uvicorn | grep -v grep\")",
+      "PowerShell(wsl -e bash -lc \"curl -s -o /dev/null -w 'HTTP %{http_code}\\\\n' http://localhost:8000/health; curl -s http://localhost:8000/menu | head -c 300; echo; echo ---orders---; curl -s http://localhost:8000/orders | head -c 500\")",
+      "PowerShell(wsl -e bash -lc \"curl -s -w '\\\\nHTTP %{http_code}\\\\n' -X POST http://localhost:8000/order -H 'Content-Type: application/json' -d '{\\\\\"ban\\\\\":99,\\\\\"dry_run\\\\\":true,\\\\\"items\\\\\":[{\\\\\"mon_id\\\\\":1,\\\\\"so_luong\\\\\":1}],\\\\\"ghi_chu\\\\\":\\\\\"test\\\\\"}'\")",
+      "PowerShell(wsl -e bash -lc 'curl -s -w \"\\\\nHTTP %{http_code}\\\\n\" -X POST http://localhost:8000/order -H \"Content-Type: application/json\" -d \"{\\\\\"ban\\\\\":99,\\\\\"dry_run\\\\\":true,\\\\\"items\\\\\":[{\\\\\"mon_id\\\\\":1,\\\\\"so_luong\\\\\":1}],\\\\\"ghi_chu\\\\\":\\\\\"test\\\\\"}\"')",
+      "PowerShell(wsl -e bash -lc 'echo START; curl -s -w \"\\\\nHTTP %{http_code}\\\\n\" http://localhost:8000/health; echo END')",
+      "PowerShell(wsl -e bash -lc \"curl -s -o /tmp/order_resp.txt -w 'HTTP %{http_code}' -X POST http://localhost:8000/order -H 'Content-Type: application/json' -d @/tmp/jonetsu_order_test.json; echo; cat /tmp/order_resp.txt\")",
+      "PowerShell(wsl -e bash -lc \"node --version\")",
+      "PowerShell(node --version 2>$null; if \\($LASTEXITCODE -ne 0\\) { \"no node on Windows side\" })"
+    ]
+  }
+}
