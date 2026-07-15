@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jonetsu</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: sans-serif;
+      background: #1a1a1a;
+      color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    h1 { font-size: 32px; color: #c0392b; margin-bottom: 10px; }
+    p { color: #aaa; margin-bottom: 20px; }
+
+    .role-btn {
+      width: 260px;
+      padding: 18px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .role-btn:hover { opacity: 0.85; }
+
+    .waiter { background: #c0392b; color: white; }
+    .kitchen { background: #e67e22; color: white; }
+    .sushi { background: #2980b9; color: white; }
+  </style>
+</head>
+<body>
+  <h1>🍣 Jonetsu</h1>
+  <p>Chọn vai trò của bạn</p>
+
+  <button class="role-btn waiter" onclick="location.href='/static/index.html'">
+    🧾 Waiter
+  </button>
+  <button class="role-btn kitchen" onclick="location.href='/static/kitchen.html?tram=bep'">
+    🍳 Kitchen
+  </button>
+  <button class="role-btn sushi" onclick="location.href='/static/kitchen.html?tram=sushi'">
+    🍣 Sushi
+  </button>
+</body>
+</html>

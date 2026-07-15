@@ -33,7 +33,7 @@ class Order(BaseModel):
 
 @app.get("/")
 def root():
-    return FileResponse("static/index.html")
+    return FileResponse("static/role.html")
 
 @app.get("/health")
 def health():
@@ -41,7 +41,7 @@ def health():
 
 @app.get("/menu")
 def get_menu():
-    data = supabase.table("menu").select("*").execute()
+    data = supabase.table("menu").select("*").order("ten", desc=False).execute()
     return data.data
 
 @app.post("/order")
@@ -93,3 +93,11 @@ def get_orders():
 def mark_done(order_id: int):
     supabase.table("orders").update({"trang_thai": "xong"}).eq("id", order_id).execute()
     return {"status": "ok"}
+
+@app.patch("/menu/{item_id}/available")
+def toggle_available(item_id: int):
+    item = supabase.table("menu").select("available").eq("id", item_id).execute().data[0]
+    new_status = not item["available"]
+    supabase.table("menu").update({"available": new_status}).eq("id", item_id).execute()
+    return {"available": new_status}
+
