@@ -7,7 +7,7 @@ from supabase import create_client
 from dotenv import load_dotenv
 import os
 import logging
-
+import uuid
 from bon_printer import print_bon
 
 
@@ -30,6 +30,8 @@ class Order(BaseModel):
     ban: int
     items: List[OrderItem]
     dry_run: bool = False
+    ghi_chu: str = ""
+
 
 @app.get("/")
 def root():
@@ -48,6 +50,7 @@ def get_menu():
 def receive_order(order: Order):
     # Tra Supabase để lấy tên món và trạm
     order_items = []
+    order_id = str(uuid.uuid4())
     for item in order.items:
         result = supabase.table("menu").select("*").eq("id", item.mon_id).execute()
         if not result.data:
@@ -62,7 +65,9 @@ def receive_order(order: Order):
             "ban": order.ban,
             "ten": menu_item["ten"],
             "so_luong": item.so_luong,
-            "tram": menu_item["tram"]
+            "tram": menu_item["tram"], 
+            "order_id": order_id,
+            "ghi_chu": order.ghi_chu
         }).execute()
 
     order_dict = {"ban": str(order.ban), "items": order_items}
@@ -85,8 +90,11 @@ def receive_order(order: Order):
     }
 
 @app.get("/orders")
-def get_orders():
-    data = supabase.table("orders").select("*").order("thoi_gian", desc=False).execute()
+def get_orders(tram: str = None):
+    query = supabase.table("orders").select("*").order("thoi_gian", desc=False)
+    if tram:
+        query = query.eq("tram", tram)
+    data = query.execute()
     return data.data
 
 @app.patch("/orders/{order_id}/done")

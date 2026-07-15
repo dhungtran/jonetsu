@@ -31,11 +31,6 @@
       border-left: 5px solid #f39c12;
     }
 
-    .order-card.done {
-      border-left-color: #27ae60;
-      opacity: 0.5;
-    }
-
     .ban { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
     .time { font-size: 12px; color: #aaa; margin-bottom: 10px; }
     .item { padding: 4px 0; font-size: 15px; }
@@ -51,8 +46,6 @@
       font-size: 15px;
       cursor: pointer;
     }
-
-    .done-btn:disabled { background: #555; cursor: default; }
   </style>
 </head>
 <body>
@@ -62,32 +55,47 @@
 
 <script>
   async function loadOrders() {
-    const res = await fetch('/orders');
+    const tram = new URLSearchParams(window.location.search).get('tram') || '';
+    const url = tram ? '/orders?tram=' + tram : '/orders';
+    const res = await fetch(url);
     const orders = await res.json();
+    const pending = orders.filter(o => o.trang_thai === 'cho');
     const div = document.getElementById('orders');
     div.innerHTML = '';
 
-    if (orders.length === 0) {
+    if (pending.length === 0) {
       div.innerHTML = '<p style="text-align:center;color:#aaa;margin-top:40px">Không có order nào</p>';
       return;
     }
 
-    orders.forEach(order => {
-      const done = order.trang_thai === 'xong';
+    // Gom món theo order_id
+    const grouped = {};
+    pending.forEach(o => {
+      const key = o.order_id || o.id;
+      if (!grouped[key]) {
+        grouped[key] = { ban: o.ban, thoi_gian: o.thoi_gian, items: [], ids: [] };
+      }
+      grouped[key].items.push(`x${o.so_luong} — ${o.ten}`);
+      grouped[key].ids.push(o.id);
+    });
+
+    Object.values(grouped).forEach(group => {
       div.innerHTML += `
-        <div class="order-card ${done ? 'done' : ''}">
-          <div class="ban">Bàn ${order.ban}</div>
-          <div class="time">${new Date(order.thoi_gian).toLocaleTimeString('vi-VN')}</div>
-          <div class="item">x${order.so_luong} — ${order.ten}</div>
-          <button class="done-btn" ${done ? 'disabled' : ''} onclick="markDone(${order.id})">
-            ${done ? 'Đã xong' : 'Đánh dấu xong'}
+        <div class="order-card">
+          <div class="ban">Bàn ${group.ban}</div>
+          <div class="time">${new Date(group.thoi_gian).toLocaleTimeString('vi-VN')}</div>
+          ${group.items.map(i => `<div class="item">${i}</div>`).join('')}
+          <button class="done-btn" onclick="markGroupDone(${JSON.stringify(group.ids)})">
+            Đánh dấu xong
           </button>
         </div>`;
     });
   }
 
-  async function markDone(id) {
-    await fetch('/orders/' + id + '/done', { method: 'PATCH' });
+  async function markGroupDone(ids) {
+    await Promise.all(ids.map(id =>
+      fetch('/orders/' + id + '/done', { method: 'PATCH' })
+    ));
     loadOrders();
   }
 
