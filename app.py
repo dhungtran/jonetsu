@@ -69,8 +69,8 @@ def receive_order(order: Order):
             "tram": menu_item["tram"],
             "order_id": order_id,
             "ghi_chu": order.ghi_chu,
-            "category": menu_item["category"], 
-            "gia": menu_item["category"],
+            "category": menu_item["category"],
+            "gia": menu_item["gia"],
         }).execute()
 
     order_dict = {"ban": str(order.ban), "items": order_items}
@@ -100,9 +100,9 @@ def get_orders(tram: str = None):
     data = query.execute()
     return data.data
 
-@app.patch("/orders/{order_id}/done")
-def mark_done(order_id: int):
-    supabase.table("orders").update({"trang_thai": "xong"}).eq("id", order_id).execute()
+@app.patch("/orders/{id}/done")
+def mark_done(id: int):
+    supabase.table("orders").update({"trang_thai": "xong"}).eq("id", id).execute()
     return {"status": "ok"}
 
 @app.patch("/menu/{item_id}/available")
@@ -122,7 +122,7 @@ def mark_table_paid(ban: int):
     supabase.table("orders").update({"trang_thai": "paid"}).eq("ban", ban).neq("trang_thai", "paid").execute()
     return {"status": "ok"}
 
-@app.patch("/orders/{order_id}/undo")
-def mark_undo(order_id: int):
-    supabase.table("orders").update({"trang_thai": "cho"}).eq("id", order_id).execute()
+@app.patch("/orders/{id}/undo")
+def mark_undo(id: int):
+    supabase.table("orders").update({"trang_thai": "cho"}).eq("id", id).execute()
     return {"status": "ok"}
