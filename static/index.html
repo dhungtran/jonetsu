@@ -6,298 +6,147 @@
   <title>Jonetsu Order</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; background: #f8f7fc; color: #1e1b4b; }
+    body { font-family: sans-serif; background: #f5f0e8; color: #1a1a1a; }
 
     header {
-      background: #f0edf8;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #e9d5ff;
+      background: #fff; padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 0.5px solid #e0d8cc;
     }
-
-    .logo { font-size: 20px; font-weight: 500; color: #1e1b4b; }
-    .logo span { color: #a855f7; }
-
+    .logo { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
     #table-input {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #f5f0ff;
-      border: 1px solid #d8b4fe;
-      border-radius: 8px;
-      padding: 6px 10px;
+      display: flex; align-items: center; gap: 8px;
+      background: #1a1a1a; border-radius: 6px; padding: 6px 12px;
     }
-
-    #table-input label { font-size: 12px; color: #7c3aed; }
+    #table-input label { font-size: 11px; color: #8a7a6a; }
     #table-input input {
-      width: 50px;
-      background: none;
-      border: none;
-      color: #1e1b4b;
-      font-size: 14px;
-      font-weight: 500;
-      outline: none;
+      width: 40px; background: none; border: none;
+      color: #fff; font-size: 14px; font-weight: 500; outline: none;
     }
-
-    #ghi-chu-wrap {
-      padding: 8px 16px;
-      background: white;
-      border-bottom: 1px solid #e9d5ff;
+    #table-input input::placeholder { color: #555; }
+    .dashboard-link {
+      background: none; border: 0.5px solid #e0d8cc; border-radius: 6px;
+      padding: 6px 12px; font-size: 12px; color: #8a7a6a;
+      text-decoration: none; transition: all 0.15s;
     }
+    .dashboard-link:hover { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
 
+    #ghi-chu-wrap { padding: 8px 16px; background: #fff; border-bottom: 0.5px solid #e0d8cc; }
     #ghi-chu-wrap input {
-      width: 100%;
-      background: #e8e3f5;
-      border: 1px solid #d8b4fe;
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: #1e1b4b;
-      font-size: 13px;
-      outline: none;
+      width: 100%; background: #f5f0e8; border: 0.5px solid #e0d8cc;
+      border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1a1a1a; outline: none;
     }
+    #ghi-chu-wrap input::placeholder { color: #b8ad9e; }
 
-    #ghi-chu-wrap input::placeholder { color: #c4b5fd; }
-
-    #search-wrap {
-      padding: 8px 16px;
-      background: white;
-      border-bottom: 1px solid #e9d5ff;
-    }
-
+    #search-wrap { padding: 8px 16px; background: #fff; border-bottom: 0.5px solid #e0d8cc; }
     #search-wrap input {
-      width: 100%;
-      background: #f5f0ff;
-      border: 1px solid #d8b4fe;
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: #1e1b4b;
-      font-size: 13px;
-      outline: none;
+      width: 100%; background: #f5f0e8; border: 0.5px solid #e0d8cc;
+      border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1a1a1a; outline: none;
     }
-
-    #search-wrap input::placeholder { color: #c4b5fd; }
+    #search-wrap input::placeholder { color: #b8ad9e; }
 
     #categories {
-      display: flex;
-      overflow-x: auto;
-      padding: 10px 16px;
-      gap: 8px;
-      background: white;
-      border-bottom: 1px solid #e9d5ff;
-      scrollbar-width: none;
+      display: flex; overflow-x: auto; padding: 10px 16px; gap: 6px;
+      background: #fff; border-bottom: 0.5px solid #e0d8cc; scrollbar-width: none;
     }
-
     #categories::-webkit-scrollbar { display: none; }
-
     .cat-btn {
-      padding: 5px 14px;
-      border-radius: 20px;
-      border: none;
-      background: #f5f0ff;
-      color: #7c3aed;
-      font-size: 12px;
-      cursor: pointer;
-      white-space: nowrap;
+      padding: 5px 14px; border-radius: 4px; border: 0.5px solid #e0d8cc;
+      background: #f5f0e8; color: #8a7a6a; font-size: 12px; cursor: pointer; white-space: nowrap; transition: all 0.15s;
     }
+    .cat-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
 
-    .cat-btn.active {
-      background: #ec4899;
-      color: white;
-      font-weight: 500;
-    }
-
-    #menu-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      padding: 12px 16px;
-      padding-bottom: 200px;
-    }
-
-    .menu-item {
-      background: white;
-      border-left: 3px solid #a855f7;
-      border-radius: 10px;
-      padding: 12px;
-      box-shadow: 0 1px 4px rgba(168,85,247,0.08);
-    }
-
-    .menu-item.unavailable {
-      opacity: 0.4;
-      border-left-color: #d1d5db;
-    }
-
-    .item-name { font-size: 13px; font-weight: 500; color: #1e1b4b; }
-    .item-price { font-size: 12px; color: #a855f7; margin: 3px 0 8px; }
-
-    .item-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    #menu-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px; padding-bottom: 200px; }
+    .menu-item { background: #fff; border: 0.5px solid #e0d8cc; border-radius: 8px; padding: 12px; }
+    .menu-item.unavailable { opacity: 0.4; }
+    .item-name { font-size: 12px; font-weight: 500; }
+    .item-price { font-size: 11px; color: #8a7a6a; margin: 3px 0 8px; }
+    .item-controls { display: flex; align-items: center; gap: 8px; }
     .item-controls button {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      border: none;
-      background: #a855f7;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
+      width: 24px; height: 24px; border-radius: 50%; border: 0.5px solid #e0d8cc;
+      background: #fff; color: #1a1a1a; font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all 0.15s;
     }
+    .item-controls button:not(:disabled):hover { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .item-controls button:disabled { opacity: 0.3; cursor: default; }
+    .item-qty { font-size: 13px; font-weight: 500; min-width: 16px; text-align: center; }
+    .avail-btn { margin-top: 8px; width: 100%; padding: 4px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; }
+    .avail-btn.co  { background: #f0fdf4; color: #15803d; }
+    .avail-btn.het { background: #fef2f2; color: #dc2626; }
 
-    .item-controls button:disabled { background: #e9d5ff; color: #c4b5fd; }
-    .item-qty { font-size: 14px; font-weight: 500; color: #7c3aed; min-width: 18px; text-align: center; }
-
-    .avail-btn {
-      margin-top: 8px;
-      width: 100%;
-      padding: 4px;
-      border: none;
-      border-radius: 6px;
-      font-size: 11px;
-      cursor: pointer;
-    }
-
-    .avail-btn.co { background: #f0fdf4; color: #16a34a; }
-    .avail-btn.het { background: #fdf2f8; color: #db2777; }
-
-    #cart {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: white;
-      border-top: 1px solid #e9d5ff;
-      padding: 12px 16px;
-    }
-
-    #cart-summary {
-      font-size: 13px;
-      color: #7c3aed;
-      margin-bottom: 10px;
-      max-height: 70px;
-      overflow-y: auto;
-    }
-
+    #cart { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 0.5px solid #e0d8cc; padding: 12px 16px; }
+    #cart-summary { font-size: 12px; color: #8a7a6a; margin-bottom: 8px; max-height: 60px; overflow-y: auto; }
     #send-btn {
-      width: 100%;
-      padding: 14px;
-      background: #ec4899;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
+      width: 100%; padding: 14px; background: #1a1a1a; color: #fff;
+      border: none; border-radius: 8px; font-size: 14px; font-weight: 500;
+      cursor: pointer; letter-spacing: 0.5px; transition: opacity 0.2s;
     }
-
-    #send-btn:disabled { background: #f3e8ff; color: #c4b5fd; }
+    #send-btn:hover { opacity: 0.85; }
+    #send-btn:disabled { background: #e0d8cc; color: #b8ad9e; cursor: default; opacity: 1; }
 
     #bar-section { padding: 0 16px 200px; }
-    #bar-section h3 { font-size: 13px; color: #a855f7; margin-bottom: 8px; }
-
+    #bar-section h3 { font-size: 11px; color: #8a7a6a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     #bar-summary { margin-bottom: 10px; }
-
     .bar-summary-badge {
-      display: inline-block;
-      background: #f5f0ff;
-      border: 1px solid #d8b4fe;
-      border-radius: 20px;
-      padding: 4px 12px;
-      margin: 0 6px 6px 0;
-      font-size: 12px;
-      color: #7c3aed;
+      display: inline-block; background: #fff; border: 0.5px solid #e0d8cc;
+      border-radius: 4px; padding: 3px 10px; margin: 0 4px 4px 0; font-size: 12px;
     }
-
     .bar-item {
-      background: white;
-      border-left: 3px solid #ec4899;
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      box-shadow: 0 1px 4px rgba(236,72,153,0.08);
+      background: #fff; border: 0.5px solid #e0d8cc; border-left: 2px solid #1a1a1a;
+      border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
     }
-
-    .bar-ban { font-size: 13px; font-weight: 600; color: #1e1b4b; margin-bottom: 4px; }
-    .bar-line { font-size: 13px; color: #1e1b4b; padding: 2px 0; }
-
+    .bar-ban { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .bar-line { font-size: 12px; color: #8a7a6a; padding: 2px 0; }
     .bar-done-btn {
-      margin-top: 8px;
-      width: 100%;
-      background: #f0fdf4;
-      color: #16a34a;
-      border: none;
-      border-radius: 6px;
-      padding: 6px 10px;
-      font-size: 12px;
-      cursor: pointer;
+      margin-top: 8px; width: 100%; background: #f5f0e8; color: #1a1a1a;
+      border: 0.5px solid #e0d8cc; border-radius: 6px; padding: 6px 10px;
+      font-size: 12px; cursor: pointer; transition: all 0.15s;
     }
+    .bar-done-btn:hover { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
   </style>
 </head>
 <body>
-
 <header>
-  <div class="logo"><span>Jonetsu</span></div>
+  <div class="logo">JONETSU</div>
   <div id="table-input">
     <label>Bàn</label>
     <input type="number" id="table-num" min="1" placeholder="1">
   </div>
-  <a href="/static/dashboard.html" style="
-    background: rgba(124,58,237,0.15); color: #7c3aed;
-    border: 1.5px solid #7c3aed; border-radius: 20px;
-    padding: 5px 12px; font-size: 13px; font-weight: 600;
-    text-decoration: none; white-space: nowrap;">
-    Dashboard
-  </a>
+  <a href="/static/dashboard.html" class="dashboard-link">Dashboard</a>
 </header>
 
 <div id="ghi-chu-wrap">
   <input type="text" id="ghi-chu" placeholder="Ghi chú (dị ứng, không hành...)">
 </div>
-
 <div id="search-wrap">
   <input type="text" id="search-input" placeholder="Tìm món..." oninput="searchMenu(this.value)">
 </div>
-
 <div id="categories"></div>
 <div id="menu-list"></div>
-
 <div id="bar-section">
   <h3>Bar — Đang chờ</h3>
   <div id="bar-summary"></div>
   <div id="bar-orders"></div>
 </div>
-
 <div id="cart">
   <div id="cart-summary">Chưa có món nào</div>
   <button id="send-btn" disabled>Gửi order</button>
 </div>
 
 <script>
-  let menuData = [];
-  let cart = {};
-  let activeCategory = '';
-
+  let menuData = [], cart = {}, activeCategory = '';
   const catOrder = [
     'Soft Drinks','Lemonade','Beer','Hot Drinks','Highball','Wine','Sake','Signature Drinks',
-    'Starters','Mains','Ramen',
-    'Sashimi','Nigiri','Maki','Specials','Inside Out','Hot Rolls','Party Plates'
+    'Starters','Mains','Ramen','Sashimi','Nigiri','Maki','Specials','Inside Out','Hot Rolls','Party Plates'
   ];
 
   async function loadMenu() {
-    const res = await fetch('/menu');
-    menuData = await res.json();
+    menuData = await fetch('/menu').then(r => r.json());
     renderCategories();
   }
 
   function renderCategories() {
-    const allCats = [...new Set(menuData.map(i => i.category))];
-    const cats = catOrder.filter(c => allCats.includes(c));
+    const cats = catOrder.filter(c => menuData.some(i => i.category === c));
     const div = document.getElementById('categories');
     div.innerHTML = '';
     cats.forEach((cat, idx) => {
@@ -317,44 +166,35 @@
     renderMenu(cats[0]);
   }
 
-  function renderMenu(category) {
-    renderItems(menuData.filter(i => i.category === category));
-  }
-
-  function searchMenu(query) {
-    const items = query
-      ? menuData.filter(i => i.ten.toLowerCase().includes(query.toLowerCase()))
-      : menuData.filter(i => i.category === activeCategory);
-    renderItems(items);
+  function renderMenu(cat) { renderItems(menuData.filter(i => i.category === cat)); }
+  function searchMenu(q) {
+    renderItems(q ? menuData.filter(i => i.ten.toLowerCase().includes(q.toLowerCase())) : menuData.filter(i => i.category === activeCategory));
   }
 
   function renderItems(items) {
-    const div = document.getElementById('menu-list');
-    div.innerHTML = '';
-    items.forEach(item => {
+    document.getElementById('menu-list').innerHTML = items.map(item => {
       const qty = cart[item.id]?.qty || 0;
-      const avail = item.available;
-      div.innerHTML += `
-        <div class="menu-item ${avail ? '' : 'unavailable'}">
+      return `
+        <div class="menu-item ${item.available ? '' : 'unavailable'}">
           <div class="item-name">${item.ten}</div>
           <div class="item-price">${item.gia.toFixed(2)} €</div>
           <div class="item-controls">
-            <button onclick="changeQty(${item.id}, -1)" ${!avail ? 'disabled' : ''}>−</button>
+            <button onclick="changeQty(${item.id},-1)" ${!item.available ? 'disabled' : ''}>−</button>
             <div class="item-qty" id="qty-${item.id}">${qty}</div>
-            <button onclick="changeQty(${item.id}, +1)" ${!avail ? 'disabled' : ''}>+</button>
+            <button onclick="changeQty(${item.id},+1)" ${!item.available ? 'disabled' : ''}>+</button>
           </div>
-          <button class="avail-btn ${avail ? 'co' : 'het'}" onclick="toggleAvailable(${item.id})">
-            ${avail ? 'Có sẵn' : 'Hết món'}
+          <button class="avail-btn ${item.available ? 'co' : 'het'}" onclick="toggleAvailable(${item.id})">
+            ${item.available ? 'Có sẵn' : 'Hết món'}
           </button>
         </div>`;
-    });
+    }).join('');
   }
 
   function changeQty(id, delta) {
     const item = menuData.find(i => i.id === id);
     if (!cart[id]) cart[id] = { ...item, qty: 0 };
     cart[id].qty = Math.max(0, cart[id].qty + delta);
-    if (cart[id].qty === 0) delete cart[id];
+    if (!cart[id].qty) delete cart[id];
     document.getElementById('qty-' + id).textContent = cart[id]?.qty || 0;
     updateCart();
   }
@@ -363,71 +203,45 @@
     const items = Object.values(cart);
     const summary = document.getElementById('cart-summary');
     const btn = document.getElementById('send-btn');
-    if (items.length === 0) {
-      summary.textContent = 'Chưa có món nào';
-      btn.disabled = true;
-    } else {
-      summary.innerHTML = items.map(i => `<span style="color:#a855f7">${i.ten}</span> x${i.qty}`).join(' &nbsp;·&nbsp; ');
-      btn.disabled = false;
-    }
+    if (!items.length) { summary.textContent = 'Chưa có món nào'; btn.disabled = true; return; }
+    summary.innerHTML = items.map(i => `<span style="font-weight:500">${i.ten}</span> x${i.qty}`).join(' · ');
+    btn.disabled = false;
   }
 
   async function toggleAvailable(id) {
-    const res = await fetch('/menu/' + id + '/available', { method: 'PATCH' });
-    const data = await res.json();
-    const item = menuData.find(i => i.id === id);
-    item.available = data.available;
-    const query = document.getElementById('search-input').value;
-    if (query) searchMenu(query); else renderMenu(activeCategory);
+    const data = await fetch('/menu/' + id + '/available', { method: 'PATCH' }).then(r => r.json());
+    menuData.find(i => i.id === id).available = data.available;
+    const q = document.getElementById('search-input').value;
+    q ? searchMenu(q) : renderMenu(activeCategory);
   }
 
   document.getElementById('send-btn').onclick = async () => {
     const ban = document.getElementById('table-num').value;
     if (!ban) { alert('Nhập số bàn!'); return; }
-    const items = Object.values(cart).map(i => ({ mon_id: i.id, so_luong: i.qty }));
-    const ghi_chu = document.getElementById('ghi-chu').value;
     const res = await fetch('/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ban: parseInt(ban), items, dry_run: true, ghi_chu })
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ban: parseInt(ban), items: Object.values(cart).map(i => ({ mon_id: i.id, so_luong: i.qty })), dry_run: true, ghi_chu: document.getElementById('ghi-chu').value })
     });
     if (res.ok) {
       alert('Order đã gửi!');
-      cart = {};
-      document.getElementById('ghi-chu').value = '';
-      updateCart();
-      renderMenu(activeCategory);
-      loadBarOrders();
-    } else {
-      alert('Lỗi! Thử lại.');
-    }
+      cart = {}; document.getElementById('ghi-chu').value = '';
+      updateCart(); renderMenu(activeCategory); loadBarOrders();
+    } else { alert('Lỗi! Thử lại.'); }
   };
 
   function renderBarSummary(pending) {
     const totals = {};
-    pending.forEach(o => {
-      if (!totals[o.ten]) totals[o.ten] = 0;
-      totals[o.ten] += o.so_luong;
-    });
-    const div = document.getElementById('bar-summary');
-    const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
-    div.innerHTML = sorted.map(([ten, qty]) => `
-      <span class="bar-summary-badge">${ten} <strong style="color:#ec4899">x${qty}</strong></span>`).join('');
+    pending.forEach(o => { totals[o.ten] = (totals[o.ten] || 0) + o.so_luong; });
+    document.getElementById('bar-summary').innerHTML = Object.entries(totals).sort((a,b)=>b[1]-a[1])
+      .map(([ten,qty]) => `<span class="bar-summary-badge">${ten} <strong>x${qty}</strong></span>`).join('');
   }
 
   async function loadBarOrders() {
-    const res = await fetch('/orders?tram=bar');
-    const orders = await res.json();
+    const orders = await fetch('/orders?tram=bar').then(r => r.json());
     const pending = orders.filter(o => o.trang_thai === 'cho');
-
     renderBarSummary(pending);
-
     const div = document.getElementById('bar-orders');
-    if (pending.length === 0) {
-      div.innerHTML = '<p style="color:#c4b5fd; font-size:13px">Không có order nào</p>';
-      return;
-    }
-
+    if (!pending.length) { div.innerHTML = '<p style="color:#b8ad9e;font-size:13px">Không có order nào</p>'; return; }
     const grouped = {};
     pending.forEach(o => {
       const key = o.order_id || o.id;
@@ -435,12 +249,11 @@
       grouped[key].items.push(`x${o.so_luong} ${o.ten}`);
       grouped[key].ids.push(o.id);
     });
-
-    div.innerHTML = Object.values(grouped).map(group => `
+    div.innerHTML = Object.values(grouped).map(g => `
       <div class="bar-item">
-        <div class="bar-ban">Bàn ${group.ban}</div>
-        ${group.items.map(i => `<div class="bar-line">${i}</div>`).join('')}
-        <button class="bar-done-btn" onclick="barDone(${JSON.stringify(group.ids)})">Xong</button>
+        <div class="bar-ban">Bàn ${g.ban}</div>
+        ${g.items.map(i => `<div class="bar-line">${i}</div>`).join('')}
+        <button class="bar-done-btn" onclick="barDone(${JSON.stringify(g.ids)})">Xong</button>
       </div>`).join('');
   }
 
@@ -449,8 +262,7 @@
     loadBarOrders();
   }
 
-  loadMenu();
-  loadBarOrders();
+  loadMenu(); loadBarOrders();
   setInterval(loadBarOrders, 5000);
 </script>
 </body>
