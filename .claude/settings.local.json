@@ -11,7 +11,16 @@
       "PowerShell(wsl -e bash -lc 'echo START; curl -s -w \"\\\\nHTTP %{http_code}\\\\n\" http://localhost:8000/health; echo END')",
       "PowerShell(wsl -e bash -lc \"curl -s -o /tmp/order_resp.txt -w 'HTTP %{http_code}' -X POST http://localhost:8000/order -H 'Content-Type: application/json' -d @/tmp/jonetsu_order_test.json; echo; cat /tmp/order_resp.txt\")",
       "PowerShell(wsl -e bash -lc \"node --version\")",
-      "PowerShell(node --version 2>$null; if \\($LASTEXITCODE -ne 0\\) { \"no node on Windows side\" })"
+      "PowerShell(node --version 2>$null; if \\($LASTEXITCODE -ne 0\\) { \"no node on Windows side\" })",
+      "PowerShell(wsl -e bash -lc \"curl -s -o /tmp/health_resp.txt -w 'HTTP %{http_code}' http://localhost:8000/health; echo; cat /tmp/health_resp.txt\")",
+      "PowerShell(wsl -e bash -lc \"curl -s -o /tmp/order_resp2.txt -w 'HTTP %{http_code}' -X POST http://localhost:8000/order -H 'Content-Type: application/json' -d @/tmp/jonetsu_order_test2.json; echo; cat /tmp/order_resp2.txt; echo; echo ---orders check---; curl -s 'http://localhost:8000/orders?tram=bar' | python3 -c 'import json,sys; d=json.load\\(sys.stdin\\); print\\([r for r in d if r[\\\\\"ban\\\\\"]==98]\\)' 2>/dev/null || true\")",
+      "PowerShell(wsl -e bash -lc \"curl -s -o /tmp/order_resp2.txt -w 'HTTP %{http_code}' -X POST http://localhost:8000/order -H 'Content-Type: application/json' -d @/tmp/jonetsu_order_test2.json; echo; cat /tmp/order_resp2.txt\")",
+      "PowerShell(wsl -e bash -lc \"curl -s 'http://localhost:8000/orders?tram=bep' -o /tmp/orders_bep.json; cat /tmp/orders_bep.json\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git status\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git log --oneline -5 && echo --- && git diff --stat\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git add app.py requirements.txt orders_seed.sql && git status --short\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git log -1 --format='%B'\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git commit --amend -F /tmp/jonetsu_commit_msg1.txt && git log -1 --format='%B'\")"
     ]
   }
 }
