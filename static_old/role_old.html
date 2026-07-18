@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jonetsu</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: sans-serif; background: #f5f0e8;
+      height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 12px; padding: 24px;
+    }
+    .logo { font-size: 28px; font-weight: 600; color: #1a1a1a; letter-spacing: 3px; margin-bottom: 4px; }
+    .divider { width: 32px; height: 1px; background: #1a1a1a; margin-bottom: 28px; }
+    .role-btn {
+      width: 260px; padding: 16px 20px; background: #fff;
+      border: 0.5px solid #e0d8cc; border-radius: 10px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      color: #1a1a1a; font-size: 15px; font-weight: 500;
+      transition: all 0.2s; letter-spacing: 0.5px;
+    }
+    .role-btn:hover { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+    .arrow { font-size: 16px; color: #b8ad9e; transition: all 0.2s; }
+    .role-btn:hover .arrow { color: #f5f0e8; transform: translateX(3px); }
+  </style>
+</head>
+<body>
+  <div class="logo">JONETSU</div>
+  <div class="divider"></div>
+  <button class="role-btn" onclick="location.href='/static/index.html'">Waiter <span class="arrow">→</span></button>
+  <button class="role-btn" onclick="location.href='/static/kitchen.html?tram=bep'">Kitchen <span class="arrow">→</span></button>
+  <button class="role-btn" onclick="location.href='/static/kitchen.html?tram=sushi'">Sushi <span class="arrow">→</span></button>
+</body>
+</html>
