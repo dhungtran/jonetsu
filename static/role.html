@@ -4,32 +4,87 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jonetsu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --blue-600: #3900FB;
+      --blue-700: #2E00C6;
+      --blue-100: #EDE7FF;
+      --pink-500: #F5BAD0;
+      --pink-200: #FCE7EF;
+      --ink-900: #14102B;
+      --ink-600: #4A4560;
+      --ink-400: #8B87A0;
+      --white: #FFFFFF;
+      --font-display: 'Baloo 2', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --radius-lg: 24px;
+      --radius-pill: 999px;
+      --border-width: 1.5px;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: sans-serif; background: #f5f0e8;
-      height: 100vh; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 12px; padding: 24px;
+      font-family: var(--font-body);
+      background: var(--pink-200);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 14px; padding: 24px;
     }
-    .logo { font-size: 28px; font-weight: 600; color: #1a1a1a; letter-spacing: 3px; margin-bottom: 4px; }
-    .divider { width: 32px; height: 1px; background: #1a1a1a; margin-bottom: 28px; }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 42px; font-weight: 800;
+      color: var(--blue-600);
+      margin-bottom: 2px; line-height: 1;
+    }
+    .tagline {
+      font-family: var(--font-body);
+      font-size: 14px; color: var(--ink-600);
+      margin-bottom: 20px; font-weight: 500;
+    }
     .role-btn {
-      width: 260px; padding: 16px 20px; background: #fff;
-      border: 0.5px solid #e0d8cc; border-radius: 10px; cursor: pointer;
+      width: 280px; padding: 20px 24px;
+      background: var(--white);
+      border: var(--border-width) solid var(--pink-500);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
       display: flex; justify-content: space-between; align-items: center;
-      color: #1a1a1a; font-size: 15px; font-weight: 500;
-      transition: all 0.2s; letter-spacing: 0.5px;
+      transition: all 0.18s;
     }
-    .role-btn:hover { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
-    .arrow { font-size: 16px; color: #b8ad9e; transition: all 0.2s; }
-    .role-btn:hover .arrow { color: #f5f0e8; transform: translateX(3px); }
+    .role-btn:hover {
+      background: var(--blue-600);
+      border-color: var(--blue-600);
+    }
+    .role-btn:hover .btn-label { color: var(--white); }
+    .role-btn:hover .btn-arrow { color: var(--white); }
+    .btn-label {
+      font-family: var(--font-display);
+      font-size: 20px; font-weight: 700;
+      color: var(--ink-900);
+      transition: color 0.18s;
+    }
+    .btn-arrow {
+      font-size: 18px; color: var(--ink-400);
+      transition: all 0.18s;
+    }
+    .role-btn:hover .btn-arrow { transform: translateX(4px); }
   </style>
 </head>
 <body>
-  <div class="logo">JONETSU</div>
-  <div class="divider"></div>
-  <button class="role-btn" onclick="location.href='/static/index.html'">Waiter <span class="arrow">→</span></button>
-  <button class="role-btn" onclick="location.href='/static/kitchen.html?tram=bep'">Kitchen <span class="arrow">→</span></button>
-  <button class="role-btn" onclick="location.href='/static/kitchen.html?tram=sushi'">Sushi <span class="arrow">→</span></button>
+  <div class="logo">Jonetsu</div>
+  <div class="tagline">Come, Eat and Repeat.</div>
+  <button class="role-btn" onclick="location.href='/static/index.html'">
+    <span class="btn-label">Waiter</span>
+    <span class="btn-arrow">→</span>
+  </button>
+  <button class="role-btn" onclick="location.href='/static/kitchen.html?tram=bep'">
+    <span class="btn-label">Kitchen</span>
+    <span class="btn-arrow">→</span>
+  </button>
+  <button class="role-btn" onclick="location.href='/static/kitchen.html?tram=sushi'">
+    <span class="btn-label">Sushi</span>
+    <span class="btn-arrow">→</span>
+  </button>
 </body>
 </html>

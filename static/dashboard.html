@@ -4,79 +4,168 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; background: #f5f0e8; color: #1a1a1a; padding: 16px; }
-    header {
-      background: #1a1a1a; color: #f5f0e8; text-align: center;
-      font-size: 15px; font-weight: 600; letter-spacing: 2px;
-      padding: 14px; border-radius: 10px; margin-bottom: 16px;
+    :root {
+      --blue-600: #3900FB;
+      --blue-700: #2E00C6;
+      --blue-100: #EDE7FF;
+      --pink-600: #E28FB0;
+      --pink-500: #F5BAD0;
+      --pink-200: #FCE7EF;
+      --mango-500: #FFC15B;
+      --mango-100: #FFF0D6;
+      --teal-500: #4FBFB8;
+      --ink-900: #14102B;
+      --ink-600: #4A4560;
+      --ink-400: #8B87A0;
+      --success-600: #2F9E5B;
+      --success-100: #DFF5E7;
+      --danger-600: #E0466E;
+      --danger-100: #FBE0E9;
+      --white: #FFFFFF;
+      --font-display: 'Baloo 2', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 24px;
+      --radius-pill: 999px;
+      --border-width: 1.5px;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--pink-200); color: var(--ink-900); padding: 16px; min-height: 100vh; }
+
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; padding: 4px 0;
+    }
+    .header-title {
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 800; color: var(--blue-600);
+    }
+    .header-sub {
+      font-size: 11px; font-weight: 700; color: var(--ink-400);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
     #tables { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-    .card { background: #fff; border-radius: 10px; overflow: hidden; border: 0.5px solid #e0d8cc; }
+
+    .card {
+      background: var(--white); border-radius: var(--radius-md); overflow: hidden;
+      border: var(--border-width) solid var(--pink-500);
+    }
     .card-header {
       display: flex; justify-content: space-between; align-items: center;
       padding: 14px 16px; cursor: pointer; user-select: none; transition: background 0.15s;
     }
-    .card-header:hover { background: #faf5eb; }
-    .ban-num { font-size: 18px; font-weight: 600; }
-    .ban-time { font-size: 11px; color: #8a7a6a; display: block; margin-top: 2px; }
-    .dots { display: flex; gap: 5px; }
-    .dot { font-size: 11px; padding: 2px 8px; border-radius: 4px; }
-    .dot.pending { background: #fff7ed; color: #c2410c; }
-    .dot.done    { background: #f0fdf4; color: #15803d; }
-    .chevron { color: #b8ad9e; font-size: 11px; margin-left: 6px; transition: transform 0.2s; }
+    .card-header:hover { background: var(--pink-200); }
+    .ban-num {
+      font-family: var(--font-display);
+      font-size: 20px; font-weight: 800; color: var(--ink-900);
+    }
+    .ban-time {
+      font-family: var(--font-mono); font-size: 11px; color: var(--ink-400);
+      display: block; margin-top: 2px;
+    }
+    .dots { display: flex; gap: 5px; align-items: center; }
+    .dot {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; padding: 2px 8px; border-radius: var(--radius-pill);
+    }
+    .dot.pending { background: var(--danger-100); color: var(--danger-600); }
+    .dot.done    { background: var(--success-100); color: var(--success-600); }
+    .chevron { color: var(--ink-400); font-size: 11px; margin-left: 6px; transition: transform 0.2s; }
     .card.open .chevron { transform: rotate(180deg); }
-    .card-body { display: none; padding: 0 16px 16px; border-top: 0.5px solid #f0ebe0; }
+
+    .card-body { display: none; padding: 0 16px 16px; border-top: var(--border-width) solid var(--pink-200); }
     .card.open .card-body { display: block; }
+
     .station { margin-top: 12px; }
     .station-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .station-label { font-size: 11px; font-weight: 600; color: #8a7a6a; text-transform: uppercase; letter-spacing: 0.5px; }
-    .all-btn {
-      font-size: 11px; padding: 3px 10px; border: 0.5px solid #1a1a1a;
-      background: #fff; color: #1a1a1a; border-radius: 4px; cursor: pointer; transition: all 0.15s;
+    .station-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 2px 8px; border-radius: var(--radius-pill);
     }
-    .all-btn:hover { background: #1a1a1a; color: #fff; }
-    .done-label { font-size: 11px; color: #15803d; }
+    .label-bar    { background: rgba(226,143,176,0.2); color: var(--pink-600); }
+    .label-sushi  { background: rgba(79,191,184,0.15); color: #0f6b65; }
+    .label-kitchen{ background: var(--mango-100); color: var(--ink-900); }
+
+    .all-btn {
+      font-size: 11px; font-weight: 700; padding: 3px 10px;
+      border: var(--border-width) solid var(--blue-600);
+      background: var(--white); color: var(--blue-600);
+      border-radius: var(--radius-pill); cursor: pointer; transition: all 0.15s;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .all-btn:hover { background: var(--blue-600); color: var(--white); }
+    .done-label { font-size: 11px; font-weight: 700; color: var(--success-600); text-transform: uppercase; letter-spacing: 0.04em; }
+
     .order-row {
       display: flex; align-items: center; gap: 8px;
-      padding: 7px 8px; border-radius: 6px; margin-bottom: 4px;
-      background: #faf5eb; cursor: pointer; transition: background 0.15s;
+      padding: 7px 8px; border-radius: var(--radius-sm); margin-bottom: 4px;
+      background: var(--pink-200); cursor: pointer; transition: background 0.15s;
     }
-    .order-row:hover { background: #f0ebe0; }
-    .order-row.done { background: #f0fdf4; }
-    .order-row input[type=checkbox] { accent-color: #1a1a1a; width: 15px; height: 15px; flex-shrink: 0; }
-    .row-name { flex: 1; font-size: 13px; }
-    .order-row.done .row-name { text-decoration: line-through; color: #b8ad9e; }
-    .divider { border: none; border-top: 0.5px solid #f0ebe0; margin: 10px 0; }
+    .order-row:hover { background: var(--pink-500); }
+    .order-row.done { background: var(--success-100); }
+    .order-row input[type=checkbox] { accent-color: var(--blue-600); width: 15px; height: 15px; flex-shrink: 0; }
+    .row-name { flex: 1; font-size: 13px; font-weight: 500; }
+    .order-row.done .row-name { text-decoration: line-through; color: var(--ink-400); }
+
+    .divider { border: none; border-top: var(--border-width) solid var(--pink-200); margin: 10px 0; }
+
     .pay-btn {
-      width: 100%; margin-top: 12px; padding: 11px; border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.5px;
-      background: #1a1a1a; color: #fff; transition: opacity 0.2s;
+      width: 100%; margin-top: 12px; padding: 12px;
+      background: var(--blue-600); color: var(--white); border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-display); font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
     }
-    .pay-btn:hover { opacity: 0.85; }
+    .pay-btn:hover { background: var(--blue-700); }
+
     .pay-options { display: flex; gap: 8px; margin-top: 12px; }
     .pay-opt {
-      flex: 1; padding: 11px; border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+      flex: 1; padding: 11px; border: none; border-radius: var(--radius-sm);
+      font-family: var(--font-display); font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
     }
-    .pay-opt.card-pay { background: #1a1a1a; color: #fff; }
-    .pay-opt.cash { background: #f5f0e8; color: #1a1a1a; border: 0.5px solid #e0d8cc; }
-    .pay-opt:hover { opacity: 0.8; }
+    .pay-opt.card-pay { background: var(--blue-600); color: var(--white); }
+    .pay-opt.card-pay:hover { background: var(--blue-700); }
+    .pay-opt.cash { background: var(--pink-200); color: var(--ink-900); border: var(--border-width) solid var(--pink-500); }
+    .pay-opt.cash:hover { background: var(--pink-500); }
+
     .cancel-btn {
       width: 100%; margin-top: 6px; padding: 7px; background: none;
-      border: 0.5px solid #e0d8cc; border-radius: 6px; color: #8a7a6a; font-size: 12px; cursor: pointer;
+      border: var(--border-width) solid var(--pink-500); border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 12px; font-weight: 600;
+      color: var(--ink-400); cursor: pointer;
     }
-    #empty { text-align: center; color: #8a7a6a; margin-top: 60px; font-size: 14px; display: none; }
+
+    #empty { text-align: center; color: var(--ink-400); margin-top: 60px; font-size: 14px; display: none; }
   </style>
 </head>
 <body>
-<header>TRẠNG THÁI BÀN</header>
+<header>
+  <div>
+    <div class="header-title">Dashboard</div>
+    <div class="header-sub">Trạng thái bàn</div>
+  </div>
+  <button onclick="location.href='/static/index.html'" style="
+    font-family: var(--font-body); font-size: 13px; font-weight: 600;
+    color: var(--ink-600); background: none;
+    border: var(--border-width) solid var(--pink-500);
+    border-radius: var(--radius-pill); padding: 6px 14px;
+    cursor: pointer;">← Gọi món</button>
+</header>
 <div id="tables"></div>
 <div id="empty">Không có bàn nào đang hoạt động</div>
+
 <script>
   const STATIONS = [
-    { key: 'bar', label: 'Nước' }, { key: 'sushi', label: 'Sushi' }, { key: 'bep', label: 'Bếp' },
+    { key: 'bar',   label: 'Bar',    labelClass: 'label-bar'     },
+    { key: 'sushi', label: 'Sushi',  labelClass: 'label-sushi'   },
+    { key: 'bep',   label: 'Kitchen',labelClass: 'label-kitchen' },
   ];
   const openBans = new Set();
 
@@ -89,28 +178,33 @@
     });
     const div = document.getElementById('tables');
     div.innerHTML = '';
-    const bans = Object.keys(grouped).sort((a, b) => +a - +b);
+    const bans = Object.keys(grouped).sort((a,b) => +a - +b);
     document.getElementById('empty').style.display = bans.length ? 'none' : 'block';
+
     bans.forEach(ban => {
       const { items, first_time } = grouped[ban];
       const time = new Date(first_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
       const isOpen = openBans.has(String(ban));
+
       const dotsHtml = STATIONS.map(({ key, label }) => {
         const st = items.filter(o => o.tram === key);
         if (!st.length) return '';
         const pending = st.some(o => o.trang_thai === 'cho');
         return `<span class="dot ${pending ? 'pending' : 'done'}">${label} ${pending ? 'chờ' : '✓'}</span>`;
       }).join('');
+
       let sectionsHtml = '';
-      STATIONS.forEach(({ key, label }) => {
+      STATIONS.forEach(({ key, label, labelClass }) => {
         const st = items.filter(o => o.tram === key);
         if (!st.length) return;
         const pendingIds = st.filter(o => o.trang_thai === 'cho').map(o => o.id);
         sectionsHtml += `
           <div class="station">
             <div class="station-header">
-              <span class="station-label">${label}</span>
-              ${!pendingIds.length ? '<span class="done-label">✓ Xong</span>' : `<button class="all-btn" onclick="markAll([${pendingIds}])">Tất cả xong</button>`}
+              <span class="station-label ${labelClass}">${label}</span>
+              ${!pendingIds.length
+                ? '<span class="done-label">✓ Xong</span>'
+                : `<button class="all-btn" onclick="markAll([${pendingIds}])">Tất cả xong</button>`}
             </div>
             ${st.map(o => `
               <div class="order-row ${o.trang_thai === 'xong' ? 'done' : ''}" onclick="toggle(${o.id},'${o.trang_thai}')">
@@ -119,15 +213,24 @@
               </div>`).join('')}
           </div><hr class="divider">`;
       });
+
       div.innerHTML += `
         <div class="card ${isOpen ? 'open' : ''}" id="card-${ban}">
           <div class="card-header" onclick="toggleCard('${ban}')">
-            <div><span class="ban-num">Bàn ${ban}</span><span class="ban-time">Từ ${time}</span></div>
-            <div style="display:flex;align-items:center;"><div class="dots">${dotsHtml}</div><span class="chevron">▼</span></div>
+            <div>
+              <span class="ban-num">Bàn ${ban}</span>
+              <span class="ban-time">Từ ${time}</span>
+            </div>
+            <div style="display:flex;align-items:center;">
+              <div class="dots">${dotsHtml}</div>
+              <span class="chevron">▼</span>
+            </div>
           </div>
           <div class="card-body">
             ${sectionsHtml}
-            <div id="pay-${ban}"><button class="pay-btn" onclick="showPayOptions('${ban}')">Thanh toán</button></div>
+            <div id="pay-${ban}">
+              <button class="pay-btn" onclick="showPayOptions('${ban}')">Thanh toán</button>
+            </div>
           </div>
         </div>`;
     });
@@ -147,7 +250,8 @@
       <button class="cancel-btn" onclick="cancelPay('${ban}')">Huỷ</button>`;
   }
   function cancelPay(ban) {
-    document.getElementById('pay-' + ban).innerHTML = `<button class="pay-btn" onclick="showPayOptions('${ban}')">Thanh toán</button>`;
+    document.getElementById('pay-' + ban).innerHTML =
+      `<button class="pay-btn" onclick="showPayOptions('${ban}')">Thanh toán</button>`;
   }
   async function toggle(id, status) {
     await fetch('/orders/' + id + (status === 'cho' ? '/done' : '/undo'), { method: 'PATCH' });

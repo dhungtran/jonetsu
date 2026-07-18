@@ -59,7 +59,8 @@ def receive_order(order: Order):
         order_items.append({
             "ten": menu_item["ten"],
             "so_luong": item.so_luong,
-            "tram": menu_item["tram"]
+            "tram": menu_item["tram"],
+            "category": menu_item["category"],
         })
        
         supabase.table("orders").insert({

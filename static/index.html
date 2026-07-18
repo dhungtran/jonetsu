@@ -4,110 +4,205 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jonetsu Order</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --blue-600: #3900FB;
+      --blue-700: #2E00C6;
+      --blue-100: #EDE7FF;
+      --pink-600: #E28FB0;
+      --pink-500: #F5BAD0;
+      --pink-200: #FCE7EF;
+      --mango-500: #FFC15B;
+      --mango-100: #FFF0D6;
+      --teal-500: #4FBFB8;
+      --ink-900: #14102B;
+      --ink-600: #4A4560;
+      --ink-400: #8B87A0;
+      --success-600: #2F9E5B;
+      --success-100: #DFF5E7;
+      --danger-600: #E0466E;
+      --danger-100: #FBE0E9;
+      --white: #FFFFFF;
+      --font-display: 'Baloo 2', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-pill: 999px;
+      --border-width: 1.5px;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; background: #f5f0e8; color: #1a1a1a; }
+    body { font-family: var(--font-body); background: var(--white); color: var(--ink-900); }
 
     header {
-      background: #fff; padding: 12px 16px;
+      background: var(--white);
+      padding: 12px 16px;
       display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 0.5px solid #e0d8cc;
+      border-bottom: var(--border-width) solid var(--pink-500);
+      position: sticky; top: 0; z-index: 10;
     }
-    .logo { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 800; color: var(--blue-600);
+    }
     #table-input {
-      display: flex; align-items: center; gap: 8px;
-      background: #1a1a1a; border-radius: 6px; padding: 6px 12px;
+      display: flex; align-items: center; gap: 6px;
+      background: var(--blue-600); border-radius: var(--radius-pill);
+      padding: 6px 14px;
     }
-    #table-input label { font-size: 11px; color: #8a7a6a; }
+    #table-input label {
+      font-size: 11px; color: rgba(255,255,255,0.6);
+      font-family: var(--font-body); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
     #table-input input {
-      width: 40px; background: none; border: none;
-      color: #fff; font-size: 14px; font-weight: 500; outline: none;
+      width: 36px; background: none; border: none;
+      color: var(--white); font-family: var(--font-mono);
+      font-size: 14px; font-weight: 500; outline: none;
     }
-    #table-input input::placeholder { color: #555; }
+    #table-input input::placeholder { color: rgba(255,255,255,0.4); }
     .dashboard-link {
-      background: none; border: 0.5px solid #e0d8cc; border-radius: 6px;
-      padding: 6px 12px; font-size: 12px; color: #8a7a6a;
-      text-decoration: none; transition: all 0.15s;
+      background: none; border: var(--border-width) solid var(--pink-500);
+      border-radius: var(--radius-pill); padding: 6px 14px;
+      font-size: 12px; font-weight: 600; color: var(--ink-600);
+      font-family: var(--font-body); text-decoration: none;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      transition: all 0.15s;
     }
-    .dashboard-link:hover { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .dashboard-link:hover { background: var(--blue-600); color: var(--white); border-color: var(--blue-600); }
 
-    #ghi-chu-wrap { padding: 8px 16px; background: #fff; border-bottom: 0.5px solid #e0d8cc; }
+    #ghi-chu-wrap { padding: 8px 16px; background: var(--pink-200); border-bottom: var(--border-width) solid var(--pink-500); }
     #ghi-chu-wrap input {
-      width: 100%; background: #f5f0e8; border: 0.5px solid #e0d8cc;
-      border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1a1a1a; outline: none;
+      width: 100%; background: var(--white); border: var(--border-width) solid var(--pink-500);
+      border-radius: var(--radius-md); padding: 8px 14px;
+      font-family: var(--font-body); font-size: 13px; color: var(--ink-900); outline: none;
     }
-    #ghi-chu-wrap input::placeholder { color: #b8ad9e; }
+    #ghi-chu-wrap input::placeholder { color: var(--ink-400); }
 
-    #search-wrap { padding: 8px 16px; background: #fff; border-bottom: 0.5px solid #e0d8cc; }
+    #search-wrap { padding: 8px 16px; background: var(--white); border-bottom: var(--border-width) solid var(--pink-500); }
     #search-wrap input {
-      width: 100%; background: #f5f0e8; border: 0.5px solid #e0d8cc;
-      border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1a1a1a; outline: none;
+      width: 100%; background: var(--pink-200); border: var(--border-width) solid var(--pink-500);
+      border-radius: var(--radius-md); padding: 8px 14px;
+      font-family: var(--font-body); font-size: 13px; color: var(--ink-900); outline: none;
     }
-    #search-wrap input::placeholder { color: #b8ad9e; }
+    #search-wrap input::placeholder { color: var(--ink-400); }
 
     #categories {
-      display: flex; overflow-x: auto; padding: 10px 16px; gap: 6px;
-      background: #fff; border-bottom: 0.5px solid #e0d8cc; scrollbar-width: none;
+      display: flex; overflow-x: auto; padding: 10px 16px; gap: 8px;
+      background: var(--white); border-bottom: var(--border-width) solid var(--pink-500);
+      scrollbar-width: none;
     }
     #categories::-webkit-scrollbar { display: none; }
     .cat-btn {
-      padding: 5px 14px; border-radius: 4px; border: 0.5px solid #e0d8cc;
-      background: #f5f0e8; color: #8a7a6a; font-size: 12px; cursor: pointer; white-space: nowrap; transition: all 0.15s;
+      padding: 5px 14px; border-radius: var(--radius-pill);
+      border: var(--border-width) solid var(--pink-500);
+      background: var(--white); color: var(--ink-600);
+      font-family: var(--font-body); font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      cursor: pointer; white-space: nowrap; transition: all 0.15s;
     }
-    .cat-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .cat-btn.active { background: var(--blue-600); color: var(--white); border-color: var(--blue-600); }
+    .cat-btn:not(.active):hover { border-color: var(--blue-600); color: var(--blue-600); }
 
-    #menu-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px; padding-bottom: 200px; }
-    .menu-item { background: #fff; border: 0.5px solid #e0d8cc; border-radius: 8px; padding: 12px; }
-    .menu-item.unavailable { opacity: 0.4; }
-    .item-name { font-size: 12px; font-weight: 500; }
-    .item-price { font-size: 11px; color: #8a7a6a; margin: 3px 0 8px; }
+    #menu-list {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; padding: 12px 16px; padding-bottom: 200px;
+    }
+    .menu-item {
+      background: var(--white); border: var(--border-width) solid var(--pink-500);
+      border-radius: var(--radius-md); padding: 12px;
+      transition: border-color 0.15s;
+    }
+    .menu-item:not(.unavailable):hover { border-color: var(--blue-600); }
+    .menu-item.unavailable { opacity: 0.45; }
+    .item-name {
+      font-family: var(--font-body); font-size: 13px; font-weight: 600;
+      color: var(--ink-900); margin-bottom: 2px;
+    }
+    .item-price {
+      font-family: var(--font-mono); font-size: 12px;
+      color: var(--ink-600); margin-bottom: 10px;
+    }
     .item-controls { display: flex; align-items: center; gap: 8px; }
     .item-controls button {
-      width: 24px; height: 24px; border-radius: 50%; border: 0.5px solid #e0d8cc;
-      background: #fff; color: #1a1a1a; font-size: 14px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+      width: 26px; height: 26px; border-radius: 50%;
+      border: var(--border-width) solid var(--pink-500);
+      background: var(--white); color: var(--ink-900);
+      font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
     }
-    .item-controls button:not(:disabled):hover { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .item-controls button:not(:disabled):hover { background: var(--blue-600); color: var(--white); border-color: var(--blue-600); }
     .item-controls button:disabled { opacity: 0.3; cursor: default; }
-    .item-qty { font-size: 13px; font-weight: 500; min-width: 16px; text-align: center; }
-    .avail-btn { margin-top: 8px; width: 100%; padding: 4px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; }
-    .avail-btn.co  { background: #f0fdf4; color: #15803d; }
-    .avail-btn.het { background: #fef2f2; color: #dc2626; }
-
-    #cart { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 0.5px solid #e0d8cc; padding: 12px 16px; }
-    #cart-summary { font-size: 12px; color: #8a7a6a; margin-bottom: 8px; max-height: 60px; overflow-y: auto; }
-    #send-btn {
-      width: 100%; padding: 14px; background: #1a1a1a; color: #fff;
-      border: none; border-radius: 8px; font-size: 14px; font-weight: 500;
-      cursor: pointer; letter-spacing: 0.5px; transition: opacity 0.2s;
+    .item-qty {
+      font-family: var(--font-mono); font-size: 14px; font-weight: 500;
+      color: var(--blue-600); min-width: 18px; text-align: center;
     }
-    #send-btn:hover { opacity: 0.85; }
-    #send-btn:disabled { background: #e0d8cc; color: #b8ad9e; cursor: default; opacity: 1; }
+    .avail-btn {
+      margin-top: 8px; width: 100%; padding: 4px;
+      border: none; border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer;
+    }
+    .avail-btn.co  { background: var(--success-100); color: var(--success-600); }
+    .avail-btn.het { background: var(--danger-100);  color: var(--danger-600); }
+
+    #cart {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--white); border-top: var(--border-width) solid var(--pink-500);
+      padding: 12px 16px;
+    }
+    #cart-summary {
+      font-family: var(--font-body); font-size: 12px; color: var(--ink-600);
+      margin-bottom: 8px; max-height: 60px; overflow-y: auto;
+    }
+    #send-btn {
+      width: 100%; padding: 14px;
+      background: var(--blue-600); color: var(--white);
+      border: none; border-radius: var(--radius-md);
+      font-family: var(--font-display); font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
+    }
+    #send-btn:hover { background: var(--blue-700); }
+    #send-btn:disabled { background: var(--pink-500); color: var(--white); cursor: default; }
 
     #bar-section { padding: 0 16px 200px; }
-    #bar-section h3 { font-size: 11px; color: #8a7a6a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    #bar-section h3 {
+      font-family: var(--font-body); font-size: 11px; font-weight: 700;
+      color: var(--ink-400); text-transform: uppercase; letter-spacing: 0.08em;
+      margin: 16px 0 8px;
+    }
     #bar-summary { margin-bottom: 10px; }
     .bar-summary-badge {
-      display: inline-block; background: #fff; border: 0.5px solid #e0d8cc;
-      border-radius: 4px; padding: 3px 10px; margin: 0 4px 4px 0; font-size: 12px;
+      display: inline-block; background: var(--mango-100);
+      border: var(--border-width) solid var(--mango-500);
+      border-radius: var(--radius-pill); padding: 3px 12px;
+      margin: 0 4px 4px 0; font-family: var(--font-body); font-size: 12px;
+      font-weight: 600; color: var(--ink-900);
     }
     .bar-item {
-      background: #fff; border: 0.5px solid #e0d8cc; border-left: 2px solid #1a1a1a;
-      border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+      background: var(--white); border: var(--border-width) solid var(--pink-500);
+      border-left: 3px solid var(--pink-600);
+      border-radius: var(--radius-md); padding: 12px; margin-bottom: 8px;
     }
-    .bar-ban { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-    .bar-line { font-size: 12px; color: #8a7a6a; padding: 2px 0; }
+    .bar-ban { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .bar-line { font-family: var(--font-body); font-size: 13px; color: var(--ink-600); padding: 2px 0; }
     .bar-done-btn {
-      margin-top: 8px; width: 100%; background: #f5f0e8; color: #1a1a1a;
-      border: 0.5px solid #e0d8cc; border-radius: 6px; padding: 6px 10px;
-      font-size: 12px; cursor: pointer; transition: all 0.15s;
+      margin-top: 8px; width: 100%;
+      background: var(--pink-200); color: var(--ink-900);
+      border: var(--border-width) solid var(--pink-500); border-radius: var(--radius-sm);
+      padding: 7px 10px; font-family: var(--font-body); font-size: 12px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+      cursor: pointer; transition: all 0.15s;
     }
-    .bar-done-btn:hover { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .bar-done-btn:hover { background: var(--blue-600); color: var(--white); border-color: var(--blue-600); }
   </style>
 </head>
 <body>
 <header>
-  <div class="logo">JONETSU</div>
+  <div class="logo">Jonetsu</div>
   <div id="table-input">
     <label>Bàn</label>
     <input type="number" id="table-num" min="1" placeholder="1">
@@ -204,7 +299,7 @@
     const summary = document.getElementById('cart-summary');
     const btn = document.getElementById('send-btn');
     if (!items.length) { summary.textContent = 'Chưa có món nào'; btn.disabled = true; return; }
-    summary.innerHTML = items.map(i => `<span style="font-weight:500">${i.ten}</span> x${i.qty}`).join(' · ');
+    summary.innerHTML = items.map(i => `<strong>${i.ten}</strong> x${i.qty}`).join(' · ');
     btn.disabled = false;
   }
 
@@ -232,8 +327,8 @@
   function renderBarSummary(pending) {
     const totals = {};
     pending.forEach(o => { totals[o.ten] = (totals[o.ten] || 0) + o.so_luong; });
-    document.getElementById('bar-summary').innerHTML = Object.entries(totals).sort((a,b)=>b[1]-a[1])
-      .map(([ten,qty]) => `<span class="bar-summary-badge">${ten} <strong>x${qty}</strong></span>`).join('');
+    document.getElementById('bar-summary').innerHTML = Object.entries(totals).sort((a,b) => b[1]-a[1])
+      .map(([ten,qty]) => `<span class="bar-summary-badge">${ten} x${qty}</span>`).join('');
   }
 
   async function loadBarOrders() {
@@ -241,7 +336,7 @@
     const pending = orders.filter(o => o.trang_thai === 'cho');
     renderBarSummary(pending);
     const div = document.getElementById('bar-orders');
-    if (!pending.length) { div.innerHTML = '<p style="color:#b8ad9e;font-size:13px">Không có order nào</p>'; return; }
+    if (!pending.length) { div.innerHTML = '<p style="color:var(--ink-400);font-size:13px;padding:8px 0">Không có order nào</p>'; return; }
     const grouped = {};
     pending.forEach(o => {
       const key = o.order_id || o.id;

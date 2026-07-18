@@ -4,61 +4,148 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kitchen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --blue-600: #3900FB;
+      --blue-700: #2E00C6;
+      --blue-100: #EDE7FF;
+      --pink-600: #E28FB0;
+      --pink-500: #F5BAD0;
+      --pink-200: #FCE7EF;
+      --mango-500: #FFC15B;
+      --mango-100: #FFF0D6;
+      --teal-500: #4FBFB8;
+      --ink-900: #14102B;
+      --ink-600: #4A4560;
+      --ink-400: #8B87A0;
+      --success-600: #2F9E5B;
+      --success-100: #DFF5E7;
+      --danger-600: #E0466E;
+      --danger-100: #FBE0E9;
+      --white: #FFFFFF;
+      --font-display: 'Baloo 2', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-pill: 999px;
+      --border-width: 1.5px;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; background: #f5f0e8; color: #1a1a1a; padding: 16px; }
+    body { font-family: var(--font-body); background: var(--pink-200); color: var(--ink-900); padding: 16px; min-height: 100vh; }
+
     header {
-      background: #1a1a1a; color: #f5f0e8; text-align: center;
-      font-size: 15px; font-weight: 600; letter-spacing: 2px;
-      padding: 14px; border-radius: 10px; margin-bottom: 16px;
+      text-align: center; padding: 14px;
+      margin-bottom: 16px;
     }
+    .header-title {
+      font-family: var(--font-display);
+      font-size: 26px; font-weight: 800; color: var(--blue-600);
+      letter-spacing: 0.02em;
+    }
+    .header-sub {
+      font-size: 12px; color: var(--ink-400);
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+
     #summary-section {
-      background: #fff; border: 0.5px solid #e0d8cc;
-      border-radius: 10px; padding: 14px 16px; margin-bottom: 16px;
+      background: var(--white);
+      border: var(--border-width) solid var(--pink-500);
+      border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 16px;
     }
-    #summary-label { font-size: 11px; color: #8a7a6a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    #summary-label {
+      font-size: 11px; color: var(--ink-400);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
+    }
+
     #orders { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+
     .order-card {
-      background: #fff; border-radius: 10px; padding: 16px;
-      border: 0.5px solid #e0d8cc; border-left: 3px solid #1a1a1a;
+      background: var(--white); border-radius: var(--radius-md); padding: 16px;
+      color: var(--ink-900);
     }
-    .ban { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
-    .time { font-size: 11px; color: #8a7a6a; margin-bottom: 10px; }
-    .item { padding: 5px 0; font-size: 13px; border-bottom: 0.5px solid #f0ebe0; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .ban {
+      font-family: var(--font-display);
+      font-size: 20px; font-weight: 800; color: var(--ink-900);
+    }
+    .time {
+      font-family: var(--font-mono); font-size: 11px; color: var(--ink-400);
+      margin-top: 4px;
+    }
+    .station-badge {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 3px 10px; border-radius: var(--radius-pill);
+    }
+    .badge-kitchen { background: var(--mango-100); color: var(--ink-900); }
+    .badge-sushi   { background: rgba(79,191,184,0.15); color: #0f6b65; }
+
+    .item {
+      padding: 5px 0; font-size: 13px; font-weight: 500; color: var(--ink-900);
+      border-bottom: 1px solid var(--pink-200);
+    }
     .item:last-of-type { border-bottom: none; }
+
+    .ghi-chu {
+      margin-top: 10px; padding: 7px 10px;
+      background: var(--mango-100); border: var(--border-width) solid var(--mango-500);
+      border-radius: var(--radius-sm); font-size: 12px; color: var(--ink-900);
+    }
+
+    .tags { margin-top: 8px; display: flex; gap: 5px; flex-wrap: wrap; }
+    .tag {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 2px 8px; border-radius: var(--radius-pill);
+    }
+    .tag-vor   { background: var(--success-100); color: var(--success-600); }
+    .tag-hot   { background: var(--danger-100);  color: var(--danger-600); }
+    .tag-sushi { background: rgba(79,191,184,0.15); color: #0f6b65; }
+
     .done-btn {
       margin-top: 12px; width: 100%; padding: 10px;
-      background: #1a1a1a; color: #fff; border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.2s;
+      background: var(--blue-600); color: var(--white);
+      border: none; border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      cursor: pointer; transition: background 0.15s;
     }
-    .done-btn:hover { opacity: 0.8; }
-    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
-    .tag-vor   { background: #f0fdf4; color: #15803d; }
-    .tag-hot   { background: #fff7ed; color: #c2410c; }
-    .tag-sushi { background: #f0f0ee; color: #555; }
-    .ghi-chu { margin-top: 8px; padding: 6px 10px; background: #faf5eb; border: 0.5px solid #e0d8cc; border-radius: 6px; font-size: 12px; color: #8a7a6a; }
+    .done-btn:hover { background: var(--blue-700); }
   </style>
 </head>
 <body>
-<header id="page-header">KITCHEN</header>
+<header>
+  <div class="header-title" id="page-title">Kitchen</div>
+  <div class="header-sub" id="page-sub">Bếp chính</div>
+</header>
+
 <div id="summary-section">
   <div id="summary-label">Tổng đang chờ</div>
   <div id="summary-list"></div>
 </div>
 <div id="orders"></div>
+
 <script>
   const tram = new URLSearchParams(window.location.search).get('tram') || '';
-  if (tram === 'sushi') document.getElementById('page-header').textContent = 'SUSHI';
+  if (tram === 'sushi') {
+    document.getElementById('page-title').textContent = 'Sushi';
+    document.getElementById('page-sub').textContent = 'Quầy sushi';
+  }
+
+  const badgeClass = tram === 'sushi' ? 'badge-sushi' : 'badge-kitchen';
+  const badgeLabel = tram === 'sushi' ? 'SUSHI' : 'KITCHEN';
 
   function renderSummary(pending) {
     const totals = {};
-    pending.forEach(o => { if (!totals[o.ten]) totals[o.ten] = 0; totals[o.ten] += o.so_luong; });
+    pending.forEach(o => { totals[o.ten] = (totals[o.ten] || 0) + o.so_luong; });
     const div = document.getElementById('summary-list');
-    const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
-    if (!sorted.length) { div.innerHTML = '<span style="color:#8a7a6a;font-size:13px">Không có gì</span>'; return; }
-    div.innerHTML = sorted.map(([ten, qty]) =>
-      `<span style="display:inline-block;background:#f5f0e8;border:0.5px solid #e0d8cc;border-radius:4px;padding:3px 10px;margin:3px;font-size:12px;">
-        ${ten} <strong>x${qty}</strong>
+    const sorted = Object.entries(totals).sort((a,b) => b[1]-a[1]);
+    if (!sorted.length) { div.innerHTML = '<span style="color:var(--ink-400);font-size:13px">Không có gì</span>'; return; }
+    div.innerHTML = sorted.map(([ten,qty]) =>
+      `<span style="display:inline-block;background:var(--pink-200);border:1px solid var(--pink-500);border-radius:999px;padding:3px 12px;margin:3px;font-size:12px;font-weight:600;color:var(--ink-900);">
+        ${ten} <span style="font-family:'IBM Plex Mono',monospace;">x${qty}</span>
       </span>`).join('');
   }
 
@@ -72,7 +159,7 @@
     div.innerHTML = '';
     renderSummary(pending);
     if (!pending.length) {
-      div.innerHTML = '<p style="text-align:center;color:#8a7a6a;margin-top:40px">Không có order nào</p>';
+      div.innerHTML = '<p style="text-align:center;color:var(--ink-400);margin-top:40px;font-size:14px">Không có order nào</p>';
       return;
     }
     const grouped = {};
@@ -95,14 +182,19 @@
         g.hasStarter ? '<span class="tag tag-vor">Có vor</span>' : '',
         g.hasMain    ? '<span class="tag tag-hot">Có đồ nóng</span>' : '',
         g.hasSushi   ? '<span class="tag tag-sushi">Có sushi</span>' : '',
-      ].filter(Boolean).join(' ');
+      ].filter(Boolean).join('');
       div.innerHTML += `
         <div class="order-card">
-          <div class="ban">Bàn ${g.ban}</div>
-          <div class="time">${new Date(g.thoi_gian).toLocaleTimeString('vi-VN')}</div>
+          <div class="card-top">
+            <div>
+              <div class="ban">Bàn ${g.ban}</div>
+              <div class="time">${new Date(g.thoi_gian).toLocaleTimeString('vi-VN')}</div>
+            </div>
+            <span class="station-badge ${badgeClass}">${badgeLabel}</span>
+          </div>
           ${g.items.map(i => `<div class="item">${i}</div>`).join('')}
           ${g.ghi_chu ? `<div class="ghi-chu">${g.ghi_chu}</div>` : ''}
-          ${tags ? `<div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;">${tags}</div>` : ''}
+          ${tags ? `<div class="tags">${tags}</div>` : ''}
           <button class="done-btn" onclick="markGroupDone(${JSON.stringify(g.ids)})">Đánh dấu xong</button>
         </div>`;
     });
