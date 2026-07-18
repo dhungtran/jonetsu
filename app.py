@@ -74,7 +74,7 @@ def receive_order(order: Order):
             "gia": menu_item["gia"],
         }).execute()
 
-    order_dict = {"ban": str(order.ban), "items": order_items}
+    order_dict = {"ban": str(order.ban), "items": order_items, "ghi_chu": order.ghi_chu}
     tram_can_in = set(i["tram"] for i in order_items)
 
     results = {}

@@ -10,7 +10,6 @@
     :root {
       --blue-600: #3900FB;
       --blue-700: #2E00C6;
-      --blue-100: #EDE7FF;
       --pink-600: #E28FB0;
       --pink-500: #F5BAD0;
       --pink-200: #FCE7EF;
@@ -33,96 +32,109 @@
       --radius-lg: 24px;
       --radius-pill: 999px;
       --border-width: 1.5px;
+
+      --bg-page: var(--pink-200);
+      --bg-surface-raised: var(--white);
+      --bg-surface-tint: var(--pink-200);
+      --text-primary: var(--ink-900);
+      --text-secondary: var(--ink-600);
+      --text-muted: var(--ink-400);
+      --border-default: var(--pink-500);
+      --accent-primary: var(--blue-600);
+      --accent-primary-hover: var(--blue-700);
+    }
+    :root[data-theme="dark"] {
+      --bg-page: #0F0B22;
+      --bg-surface-raised: #221A4D;
+      --bg-surface-tint: rgba(245,186,208,0.08);
+      --text-primary: #FFFFFF;
+      --text-secondary: var(--pink-200);
+      --text-muted: #8A83B8;
+      --border-default: rgba(245,186,208,0.22);
+      --accent-primary: #8B6BFF;
+      --accent-primary-hover: #A88CFF;
+      --success-100: rgba(47,158,91,0.2);
+      --danger-100: rgba(224,70,110,0.2);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font-body); background: var(--pink-200); color: var(--ink-900); padding: 16px; min-height: 100vh; }
+    body { font-family: var(--font-body); background: var(--bg-page); color: var(--text-primary); padding: 16px; min-height: 100vh; transition: background 0.2s, color 0.2s; }
 
     header {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 16px; padding: 4px 0;
     }
-    .header-title {
-      font-family: var(--font-display);
-      font-size: 24px; font-weight: 800; color: var(--blue-600);
-    }
-    .header-sub {
-      font-size: 11px; font-weight: 700; color: var(--ink-400);
-      text-transform: uppercase; letter-spacing: 0.08em;
+    .header-title { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--accent-primary); }
+    .logo-link img { width: 40px; height: 40px; object-fit: contain; display: block; }
+    .header-sub { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+
+    .theme-toggle {
+      background: var(--bg-surface-raised); border: var(--border-width) solid var(--border-default);
+      border-radius: var(--radius-pill); padding: 4px 10px;
+      font-size: 14px; cursor: pointer; transition: all 0.15s;
     }
 
     #tables { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
 
     .card {
-      background: var(--white); border-radius: var(--radius-md); overflow: hidden;
-      border: var(--border-width) solid var(--pink-500);
+      background: var(--bg-surface-raised); border-radius: var(--radius-md); overflow: hidden;
+      border: var(--border-width) solid var(--border-default);
     }
     .card-header {
       display: flex; justify-content: space-between; align-items: center;
       padding: 14px 16px; cursor: pointer; user-select: none; transition: background 0.15s;
     }
-    .card-header:hover { background: var(--pink-200); }
-    .ban-num {
-      font-family: var(--font-display);
-      font-size: 20px; font-weight: 800; color: var(--ink-900);
-    }
-    .ban-time {
-      font-family: var(--font-mono); font-size: 11px; color: var(--ink-400);
-      display: block; margin-top: 2px;
-    }
+    .card-header:hover { background: var(--bg-surface-tint); }
+    .ban-num { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--text-primary); }
+    .ban-time { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); display: block; margin-top: 2px; }
     .dots { display: flex; gap: 5px; align-items: center; }
-    .dot {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.04em; padding: 2px 8px; border-radius: var(--radius-pill);
-    }
+    .dot { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; border-radius: var(--radius-pill); }
     .dot.pending { background: var(--danger-100); color: var(--danger-600); }
     .dot.done    { background: var(--success-100); color: var(--success-600); }
-    .chevron { color: var(--ink-400); font-size: 11px; margin-left: 6px; transition: transform 0.2s; }
+    .chevron { color: var(--text-muted); font-size: 11px; margin-left: 6px; transition: transform 0.2s; }
     .card.open .chevron { transform: rotate(180deg); }
 
-    .card-body { display: none; padding: 0 16px 16px; border-top: var(--border-width) solid var(--pink-200); }
+    .card-body { display: none; padding: 0 16px 16px; border-top: var(--border-width) solid var(--border-default); }
     .card.open .card-body { display: block; }
 
     .station { margin-top: 12px; }
     .station-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .station-label {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.08em; padding: 2px 8px; border-radius: var(--radius-pill);
-    }
+    .station-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; border-radius: var(--radius-pill); }
     .label-bar    { background: rgba(226,143,176,0.2); color: var(--pink-600); }
     .label-sushi  { background: rgba(79,191,184,0.15); color: #0f6b65; }
     .label-kitchen{ background: var(--mango-100); color: var(--ink-900); }
 
     .all-btn {
       font-size: 11px; font-weight: 700; padding: 3px 10px;
-      border: var(--border-width) solid var(--blue-600);
-      background: var(--white); color: var(--blue-600);
+      border: var(--border-width) solid var(--accent-primary);
+      background: var(--bg-surface-raised); color: var(--accent-primary);
       border-radius: var(--radius-pill); cursor: pointer; transition: all 0.15s;
       text-transform: uppercase; letter-spacing: 0.04em;
     }
-    .all-btn:hover { background: var(--blue-600); color: var(--white); }
+    .all-btn:hover { background: var(--accent-primary); color: #fff; }
     .done-label { font-size: 11px; font-weight: 700; color: var(--success-600); text-transform: uppercase; letter-spacing: 0.04em; }
 
     .order-row {
       display: flex; align-items: center; gap: 8px;
       padding: 7px 8px; border-radius: var(--radius-sm); margin-bottom: 4px;
-      background: var(--pink-200); cursor: pointer; transition: background 0.15s;
+      background: var(--bg-surface-tint); cursor: pointer; transition: background 0.15s;
     }
-    .order-row:hover { background: var(--pink-500); }
+    .order-row:hover { background: var(--border-default); }
     .order-row.done { background: var(--success-100); }
-    .order-row input[type=checkbox] { accent-color: var(--blue-600); width: 15px; height: 15px; flex-shrink: 0; }
-    .row-name { flex: 1; font-size: 13px; font-weight: 500; }
-    .order-row.done .row-name { text-decoration: line-through; color: var(--ink-400); }
+    .order-row input[type=checkbox] { accent-color: var(--accent-primary); width: 15px; height: 15px; flex-shrink: 0; }
+    .row-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .order-row.done .row-name { text-decoration: line-through; color: var(--text-muted); }
 
-    .divider { border: none; border-top: var(--border-width) solid var(--pink-200); margin: 10px 0; }
+    .divider { border: none; border-top: var(--border-width) solid var(--border-default); margin: 10px 0; }
 
     .pay-btn {
       width: 100%; margin-top: 12px; padding: 12px;
-      background: var(--blue-600); color: var(--white); border: none;
+      background: var(--accent-primary); color: #fff; border: none;
       border-radius: var(--radius-sm);
       font-family: var(--font-display); font-size: 16px; font-weight: 700;
       cursor: pointer; transition: background 0.15s;
     }
-    .pay-btn:hover { background: var(--blue-700); }
+    .pay-btn:hover { background: var(--accent-primary-hover); }
 
     .pay-options { display: flex; gap: 8px; margin-top: 12px; }
     .pay-opt {
@@ -130,38 +142,42 @@
       font-family: var(--font-display); font-size: 15px; font-weight: 700;
       cursor: pointer; transition: background 0.15s;
     }
-    .pay-opt.card-pay { background: var(--blue-600); color: var(--white); }
-    .pay-opt.card-pay:hover { background: var(--blue-700); }
-    .pay-opt.cash { background: var(--pink-200); color: var(--ink-900); border: var(--border-width) solid var(--pink-500); }
-    .pay-opt.cash:hover { background: var(--pink-500); }
+    .pay-opt.card-pay { background: var(--accent-primary); color: #fff; }
+    .pay-opt.card-pay:hover { background: var(--accent-primary-hover); }
+    .pay-opt.cash { background: var(--bg-surface-tint); color: var(--text-primary); border: var(--border-width) solid var(--border-default); }
+    .pay-opt.cash:hover { background: var(--border-default); }
 
     .cancel-btn {
       width: 100%; margin-top: 6px; padding: 7px; background: none;
-      border: var(--border-width) solid var(--pink-500); border-radius: var(--radius-sm);
+      border: var(--border-width) solid var(--border-default); border-radius: var(--radius-sm);
       font-family: var(--font-body); font-size: 12px; font-weight: 600;
-      color: var(--ink-400); cursor: pointer;
+      color: var(--text-muted); cursor: pointer;
     }
 
-    #empty { text-align: center; color: var(--ink-400); margin-top: 60px; font-size: 14px; display: none; }
+    #empty { text-align: center; color: var(--text-muted); margin-top: 60px; font-size: 14px; display: none; }
   </style>
 </head>
 <body>
 <header>
+  <a href="/" class="logo-link"><img src="/static/logo.png" alt="Jonetsu"></a>
   <div>
     <div class="header-title">Dashboard</div>
-    <div class="header-sub">Trạng thái bàn</div>
   </div>
-  <button onclick="location.href='/static/index.html'" style="
-    font-family: var(--font-body); font-size: 13px; font-weight: 600;
-    color: var(--ink-600); background: none;
-    border: var(--border-width) solid var(--pink-500);
-    border-radius: var(--radius-pill); padding: 6px 14px;
-    cursor: pointer;">← Gọi món</button>
+  <div class="header-right">
+    <button onclick="location.href='/static/index.html'" style="
+      font-family: var(--font-body); font-size: 16px; font-weight: 600;
+      color: var(--text-secondary); background: none;
+      border: var(--border-width) solid var(--border-default);
+      border-radius: var(--radius-pill); padding: 6px 14px;
+      cursor: pointer;">←</button>
+  </div>
 </header>
 <div id="tables"></div>
 <div id="empty">Không có bàn nào đang hoạt động</div>
 
 <script>
+  (function(){ document.documentElement.dataset.theme = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light'; })();
+
   const STATIONS = [
     { key: 'bar',   label: 'Bar',    labelClass: 'label-bar'     },
     { key: 'sushi', label: 'Sushi',  labelClass: 'label-sushi'   },

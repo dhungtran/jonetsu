@@ -10,7 +10,6 @@
     :root {
       --blue-600: #3900FB;
       --blue-700: #2E00C6;
-      --blue-100: #EDE7FF;
       --pink-500: #F5BAD0;
       --pink-200: #FCE7EF;
       --ink-900: #14102B;
@@ -22,57 +21,78 @@
       --radius-lg: 24px;
       --radius-pill: 999px;
       --border-width: 1.5px;
+
+      --bg-page: var(--pink-200);
+      --bg-surface-raised: var(--white);
+      --text-primary: var(--ink-900);
+      --text-secondary: var(--ink-600);
+      --text-muted: var(--ink-400);
+      --border-default: var(--pink-500);
+      --accent-primary: var(--blue-600);
+      --accent-primary-hover: var(--blue-700);
+    }
+    :root[data-theme="dark"] {
+      --bg-page: #0F0B22;
+      --bg-surface-raised: #221A4D;
+      --text-primary: #FFFFFF;
+      --text-secondary: var(--pink-200);
+      --text-muted: #8A83B8;
+      --border-default: rgba(245,186,208,0.22);
+      --accent-primary: #8B6BFF;
+      --accent-primary-hover: #A88CFF;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: var(--font-body);
-      background: var(--pink-200);
+      background: var(--bg-page);
       min-height: 100vh;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       gap: 14px; padding: 24px;
+      transition: background 0.2s;
     }
-    .logo {
-      font-family: var(--font-display);
-      font-size: 42px; font-weight: 800;
-      color: var(--blue-600);
-      margin-bottom: 2px; line-height: 1;
-    }
+    .logo img { width: 160px; height: auto; margin-bottom: 8px; }
     .tagline {
       font-family: var(--font-body);
-      font-size: 14px; color: var(--ink-600);
+      font-size: 14px; color: var(--text-secondary);
       margin-bottom: 20px; font-weight: 500;
     }
     .role-btn {
       width: 280px; padding: 20px 24px;
-      background: var(--white);
-      border: var(--border-width) solid var(--pink-500);
+      background: var(--bg-surface-raised);
+      border: var(--border-width) solid var(--border-default);
       border-radius: var(--radius-lg);
       cursor: pointer;
       display: flex; justify-content: space-between; align-items: center;
       transition: all 0.18s;
     }
     .role-btn:hover {
-      background: var(--blue-600);
-      border-color: var(--blue-600);
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
     }
-    .role-btn:hover .btn-label { color: var(--white); }
-    .role-btn:hover .btn-arrow { color: var(--white); }
+    .role-btn:hover .btn-label { color: #fff; }
+    .role-btn:hover .btn-arrow { color: #fff; transform: translateX(4px); }
     .btn-label {
       font-family: var(--font-display);
       font-size: 20px; font-weight: 700;
-      color: var(--ink-900);
+      color: var(--text-primary);
       transition: color 0.18s;
     }
     .btn-arrow {
-      font-size: 18px; color: var(--ink-400);
+      font-size: 18px; color: var(--text-muted);
       transition: all 0.18s;
     }
-    .role-btn:hover .btn-arrow { transform: translateX(4px); }
+    .theme-toggle {
+      position: fixed; top: 16px; right: 16px;
+      background: var(--bg-surface-raised); border: var(--border-width) solid var(--border-default);
+      border-radius: var(--radius-pill); padding: 6px 12px;
+      font-size: 16px; cursor: pointer; transition: all 0.18s;
+    }
   </style>
 </head>
 <body>
-  <div class="logo">Jonetsu</div>
+  <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙</button>
+  <div class="logo"><img src="/static/logo.png" alt="Jonetsu"></div>
   <div class="tagline">Come, Eat and Repeat.</div>
   <button class="role-btn" onclick="location.href='/static/index.html'">
     <span class="btn-label">Waiter</span>
@@ -86,5 +106,17 @@
     <span class="btn-label">Sushi</span>
     <span class="btn-arrow">→</span>
   </button>
+  <script>
+    function applyTheme(dark) {
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      document.getElementById('theme-toggle').textContent = dark ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+      const dark = document.documentElement.dataset.theme !== 'dark';
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+      applyTheme(dark);
+    }
+    applyTheme(localStorage.getItem('theme') === 'dark');
+  </script>
 </body>
 </html>

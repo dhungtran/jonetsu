@@ -20,7 +20,13 @@
       "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git log --oneline -5 && echo --- && git diff --stat\")",
       "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git add app.py requirements.txt orders_seed.sql && git status --short\")",
       "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git log -1 --format='%B'\")",
-      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git commit --amend -F /tmp/jonetsu_commit_msg1.txt && git log -1 --format='%B'\")"
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git commit --amend -F /tmp/jonetsu_commit_msg1.txt && git log -1 --format='%B'\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git status --short && echo --- && git log --oneline -8\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git show --stat 2cef900 && echo --- && git show --stat 4c2dfd7\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git add static/dashboard_old.html static/index_old.html static/kitchen_old.html static/role_old.html && git commit -F /tmp/jonetsu_commit_msg3.txt\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git add app.py bon_printer.py static/dashboard.html static/index.html static/kitchen.html static/role.html && git commit -F /tmp/jonetsu_commit_msg4.txt && git log --oneline -6\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git fetch origin && git status -sb\")",
+      "PowerShell(wsl -e bash -lc \"cd /home/dhungtran/projects/jonetsu && git push origin main\")"
     ]
   }
 }
